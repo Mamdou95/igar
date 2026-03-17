@@ -1,0 +1,26 @@
+[project]
+name = "igar"
+version = "0.1.0"
+description = "Igar - Plateforme d'archivage documentaire a valeur probante"
+requires-python = ">=3.12"
+# Runtime dependencies are managed in requirements/igar/*.txt (source of truth).
+# This section is intentionally left empty to avoid duplication.
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "DJ", "UP", "B", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["igar"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "igar.settings.test"
+python_files = ["test_*.py"]
+addopts = "--reuse-db -x --ff"
+
+[tool.coverage.run]
+source = ["igar"]
+omit = ["*/migrations/*", "*/tests/*"]
