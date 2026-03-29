@@ -32,3 +32,17 @@ class ClassificationFailedError(IgarException):
 
     status_code = 422
     error_type = "classification_failed"
+
+
+class InvalidRequestError(IgarException):
+    """Raised when the API request payload is malformed or incomplete."""
+
+    status_code = 400
+    error_type = "invalid_request"
+
+
+class AuthenticationFailedError(IgarException):
+    """Raised when credentials or authentication state are invalid."""
+
+    status_code = 401
+    error_type = "invalid_credentials"
