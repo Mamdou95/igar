@@ -5,11 +5,14 @@
 # Django is managed by Mayan EDMS via setup.py (currently 4.2.x).
 # Will be upgraded to Django 5.2+ with Mayan 4.11.
 djangorestframework>=3.15
+djangorestframework-simplejwt>=5.3,<6.0
+channels>=4.1
 structlog>=25.5.0
 django-structlog>=10.0.0
 pydantic>=2.12.5,<3.0
 celery[redis]>=5.4
 redis>=5.0
+daphne>=4.1
 django-cors-headers>=4.0
 django-csp>=4.0
 boto3>=1.35
