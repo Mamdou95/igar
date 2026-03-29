@@ -1,0 +1,39 @@
+{
+  "layout": {
+    "searchPlaceholder": "Search documents, folders, or users",
+    "logout": "Sign out"
+  },
+  "routes": {
+    "documents": "Documents",
+    "import": "Import",
+    "conformite": "Compliance",
+    "admin": "Admin"
+  },
+  "pages": {
+    "login": {
+      "title": "Sign in",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign in",
+      "usernameRequired": "Please enter your username.",
+      "passwordRequired": "Please enter your password.",
+      "errorGeneric": "Unable to sign in. Please check your credentials and try again."
+    },
+    "documents": {
+      "title": "Documents hub",
+      "description": "Document access and search workspace under construction."
+    },
+    "import": {
+      "title": "Import",
+      "description": "Document intake and ingestion channel."
+    },
+    "conformite": {
+      "title": "Compliance",
+      "description": "Retention and traceability controls dashboard."
+    },
+    "admin": {
+      "title": "Administration",
+      "description": "Security, role and governance settings for the platform."
+    }
+  }
+}

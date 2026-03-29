@@ -1,0 +1,39 @@
+{
+  "layout": {
+    "searchPlaceholder": "Rechercher un document, un dossier ou un utilisateur",
+    "logout": "Se deconnecter"
+  },
+  "routes": {
+    "documents": "Documents",
+    "import": "Import",
+    "conformite": "Conformite",
+    "admin": "Admin"
+  },
+  "pages": {
+    "login": {
+      "title": "Connexion",
+      "username": "Identifiant",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "usernameRequired": "Veuillez saisir votre identifiant.",
+      "passwordRequired": "Veuillez saisir votre mot de passe.",
+      "errorGeneric": "Connexion impossible. Verifiez vos informations puis reessayez."
+    },
+    "documents": {
+      "title": "Espace documents",
+      "description": "Vue de consultation et recherche documentaire en cours de construction."
+    },
+    "import": {
+      "title": "Import",
+      "description": "Canal de depots et d'ingestion des documents."
+    },
+    "conformite": {
+      "title": "Conformite",
+      "description": "Pilotage des obligations de conservation et de tracabilite."
+    },
+    "admin": {
+      "title": "Administration",
+      "description": "Parametrage des profils, securite et gouvernance de la plateforme."
+    }
+  }
+}

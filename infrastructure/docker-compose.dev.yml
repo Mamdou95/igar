@@ -1,0 +1,48 @@
+services:
+  backend:
+    environment:
+      DJANGO_SETTINGS_MODULE: igar.settings.development
+      DEBUG: "True"
+    volumes:
+      - ../backend:/app
+
+  backend-ws:
+    environment:
+      DJANGO_SETTINGS_MODULE: igar.settings.development
+      DEBUG: "True"
+    volumes:
+      - ../backend:/app
+
+  worker-ocr:
+    volumes:
+      - ../backend:/app
+
+  worker-ai:
+    volumes:
+      - ../backend:/app
+
+  worker-default:
+    volumes:
+      - ../backend:/app
+
+  postgresql:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  minio:
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  elasticsearch:
+    ports:
+      - "9200:9200"
+
+  nginx:
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d/igar.dev.conf:/etc/nginx/conf.d/igar.conf:ro

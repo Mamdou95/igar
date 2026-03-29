@@ -1,0 +1,345 @@
+services:
+  postgresql:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks: [igar-network]
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks: [igar-network]
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [igar-network]
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    volumes:
+      - ./minio/init-buckets.sh:/init-buckets.sh:ro
+    entrypoint: ["/bin/sh", "/init-buckets.sh"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    restart: "no"
+    networks: [igar-network]
+
+  elasticsearch:
+    image: elasticsearch:8.17.0
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: ${ES_JAVA_OPTS}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [igar-network]
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: docker/Dockerfile
+    command: gunicorn igar.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 120
+    env_file:
+      - .env
+    environment:
+      REDIS_URL: ${REDIS_URL}
+      CELERY_BROKER_URL: ${REDIS_URL}
+      CELERY_RESULT_BACKEND: ${REDIS_URL}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DATABASE_URL: ${DATABASE_URL}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      RUN_MIGRATIONS: "true"
+      RUN_COLLECTSTATIC: "true"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks: [igar-network]
+
+  backend-ws:
+    build:
+      context: ../backend
+      dockerfile: docker/Dockerfile
+    command: daphne -b 0.0.0.0 -p 8001 igar.asgi:application
+    env_file:
+      - .env
+    environment:
+      REDIS_URL: ${REDIS_URL}
+      CELERY_BROKER_URL: ${REDIS_URL}
+      CELERY_RESULT_BACKEND: ${REDIS_URL}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DATABASE_URL: ${DATABASE_URL}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks: [igar-network]
+
+  worker-ocr:
+    build:
+      context: ../backend
+      dockerfile: docker/Dockerfile
+    command: celery -A mayan worker -Q ocr -c 2 --loglevel=info
+    env_file:
+      - .env
+    environment:
+      REDIS_URL: ${REDIS_URL}
+      CELERY_BROKER_URL: ${REDIS_URL}
+      CELERY_RESULT_BACKEND: ${REDIS_URL}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DATABASE_URL: ${DATABASE_URL}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks: [igar-network]
+
+  worker-ai:
+    build:
+      context: ../backend
+      dockerfile: docker/Dockerfile
+    command: celery -A mayan worker -Q ai -c 2 --loglevel=info
+    env_file:
+      - .env
+    environment:
+      REDIS_URL: ${REDIS_URL}
+      CELERY_BROKER_URL: ${REDIS_URL}
+      CELERY_RESULT_BACKEND: ${REDIS_URL}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DATABASE_URL: ${DATABASE_URL}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+    networks: [igar-network]
+
+  worker-default:
+    build:
+      context: ../backend
+      dockerfile: docker/Dockerfile
+    command: celery -A mayan worker -Q default,compliance -c 2 --loglevel=info
+    env_file:
+      - .env
+    environment:
+      REDIS_URL: ${REDIS_URL}
+      CELERY_BROKER_URL: ${REDIS_URL}
+      CELERY_RESULT_BACKEND: ${REDIS_URL}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DATABASE_URL: ${DATABASE_URL}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+    networks: [igar-network]
+
+  celery-beat:
+    build:
+      context: ../backend
+      dockerfile: docker/Dockerfile
+    command: celery -A mayan beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file:
+      - .env
+    environment:
+      REDIS_URL: ${REDIS_URL}
+      CELERY_BROKER_URL: ${REDIS_URL}
+      CELERY_RESULT_BACKEND: ${REDIS_URL}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DATABASE_URL: ${DATABASE_URL}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+    networks: [igar-network]
+
+  tusd:
+    image: tusproject/tusd:latest
+    command:
+      - -host=0.0.0.0
+      - -port=8080
+      - -s3-bucket=igar-temp
+      - -s3-endpoint=http://minio:9000
+      - -s3-disable-ssl
+      - -hooks-http=http://backend:8000/api/v1/capture/tus-hook/
+      - -hooks-enabled-events=post-finish
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks: [igar-network]
+
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    command: gotenberg --api-timeout=30s --api-root-path=/
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [igar-network]
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+      # - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/html:/usr/share/nginx/html:ro
+    depends_on:
+      backend:
+        condition: service_started
+      backend-ws:
+        condition: service_started
+      tusd:
+        condition: service_started
+    networks: [igar-network]
+
+  prometheus:
+    image: prom/prometheus:latest
+    command: ["--config.file=/etc/prometheus/prometheus.yml"]
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    profiles: [monitoring]
+    networks: [igar-network]
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    profiles: [monitoring]
+    networks: [igar-network]
+
+volumes:
+  postgres-data:
+  minio-data:
+  elasticsearch-data:
+  redis-data:
+
+networks:
+  igar-network:
+    driver: bridge

@@ -1,0 +1,18 @@
+{
+  "title": "Igar Overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "type": "text",
+      "title": "Dashboard Placeholder",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+      "options": {
+        "mode": "markdown",
+        "content": "# Igar Monitoring\n\nCe dashboard sera complete dans les stories de monitoring."
+      }
+    }
+  ]
+}

@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igar — Design Directions</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1B3A5C;
+    --primary-light: #2D5F8A;
+    --primary-dark: #122740;
+    --secondary: #4A90D9;
+    --accent: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --border: #E2E8F0;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --text-disabled: #94A3B8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0F172A;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  /* === NAV === */
+  .top-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--primary-dark);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 56px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .top-nav h1 { color: #fff; font-size: 18px; font-weight: 600; }
+  .top-nav .subtitle { color: var(--text-disabled); font-size: 13px; margin-left: 12px; }
+  .nav-pills { display: flex; gap: 4px; }
+  .nav-pill {
+    padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all .2s; color: rgba(255,255,255,.6);
+    border: 1px solid transparent; background: transparent;
+  }
+  .nav-pill:hover { color: #fff; background: rgba(255,255,255,.08); }
+  .nav-pill.active { color: #fff; background: var(--secondary); border-color: var(--secondary); }
+
+  /* === SHOWCASE === */
+  .showcase { margin-top: 56px; }
+  .direction { display: none; }
+  .direction.active { display: block; }
+
+  .direction-header {
+    padding: 40px 48px 24px;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  }
+  .direction-header h2 { color: #fff; font-size: 28px; font-weight: 600; }
+  .direction-header p { color: rgba(255,255,255,.7); font-size: 14px; margin-top: 8px; max-width: 700px; }
+  .direction-tags { display: flex; gap: 8px; margin-top: 16px; }
+  .direction-tag {
+    padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 500;
+    background: rgba(255,255,255,.12); color: rgba(255,255,255,.8);
+  }
+
+  /* === MOCKUP FRAME === */
+  .mockup-frame {
+    margin: 24px 48px 48px;
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0,0,0,.3);
+    background: var(--bg);
+    min-height: 640px;
+  }
+
+  /* === SHARED COMPONENTS === */
+  .mock-header {
+    height: 56px; background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 24px; gap: 16px;
+  }
+  .mock-logo { font-weight: 700; font-size: 18px; color: var(--primary); }
+  .mock-search {
+    flex: 1; max-width: 560px; height: 36px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; display: flex; align-items: center;
+    padding: 0 12px; gap: 8px; font-size: 13px; color: var(--text-secondary);
+  }
+  .mock-search.large { max-width: 720px; height: 44px; font-size: 15px; border-radius: 22px; }
+  .mock-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--primary-light); display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: 12px; font-weight: 600;
+  }
+  .mock-notif {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); font-size: 16px; position: relative; cursor: pointer;
+  }
+  .mock-notif-dot {
+    position: absolute; top: 4px; right: 4px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--error); border: 2px solid var(--surface);
+  }
+
+  .mock-sidebar {
+    width: 240px; background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0; flex-shrink: 0; overflow-y: auto;
+  }
+  .mock-sidebar.compact { width: 64px; padding: 16px 8px; }
+  .sidebar-section { padding: 0 16px; margin-bottom: 16px; }
+  .sidebar-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px; font-size: 13px; color: var(--text-secondary);
+    cursor: pointer; border-radius: 6px; margin: 0 8px;
+    transition: all .15s;
+  }
+  .sidebar-item:hover { background: var(--bg); color: var(--text-primary); }
+  .sidebar-item.active { background: rgba(74,144,217,.08); color: var(--secondary); font-weight: 500; }
+  .sidebar-icon { width: 18px; text-align: center; flex-shrink: 0; }
+  .sidebar-tree { padding-left: 20px; }
+  .sidebar-tree .sidebar-item { font-size: 12px; padding: 5px 12px; }
+  .sidebar-count {
+    margin-left: auto; font-size: 11px;
+    background: var(--bg); padding: 1px 8px;
+    border-radius: 10px; color: var(--text-secondary);
+  }
+
+  .mock-body { display: flex; flex: 1; min-height: 584px; }
+  .mock-content { flex: 1; padding: 24px; overflow: hidden; }
+
+  /* === TABLE === */
+  .mock-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .mock-table thead th {
+    text-align: left; padding: 10px 16px; font-weight: 500;
+    color: var(--text-secondary); font-size: 12px;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+  }
+  .mock-table tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+  .mock-table tbody tr:hover { background: rgba(74,144,217,.03); }
+  .mock-table td { padding: 10px 16px; }
+  .mock-table .doc-name { font-weight: 500; color: var(--text-primary); }
+  .mock-table .doc-type { color: var(--text-secondary); font-size: 12px; }
+
+  /* === BADGES === */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 500;
+  }
+  .badge-sealed { background: rgba(16,185,129,.1); color: #059669; }
+  .badge-pending { background: rgba(245,158,11,.1); color: #D97706; }
+  .badge-error { background: rgba(239,68,68,.1); color: #DC2626; }
+  .badge-processing { background: rgba(59,130,246,.1); color: #2563EB; }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .badge-sealed .badge-dot { background: #059669; }
+  .badge-pending .badge-dot { background: #D97706; }
+  .badge-error .badge-dot { background: #DC2626; }
+  .badge-processing .badge-dot { background: #2563EB; }
+
+  /* === CARDS === */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .doc-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden; cursor: pointer;
+    transition: all .2s;
+  }
+  .doc-card:hover { border-color: var(--secondary); box-shadow: 0 4px 12px rgba(27,58,92,.08); transform: translateY(-2px); }
+  .doc-card-thumb {
+    height: 140px; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; color: var(--text-disabled);
+  }
+  .doc-card-thumb.pdf { background: linear-gradient(135deg, #FEE2E2, #FECACA); color: var(--error); }
+  .doc-card-thumb.doc { background: linear-gradient(135deg, #DBEAFE, #BFDBFE); color: var(--secondary); }
+  .doc-card-thumb.img { background: linear-gradient(135deg, #D1FAE5, #A7F3D0); color: var(--accent); }
+  .doc-card-thumb.xls { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); color: #16A34A; }
+  .doc-card-info { padding: 12px; }
+  .doc-card-info .name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .doc-card-info .meta { font-size: 11px; color: var(--text-secondary); margin-top: 4px; display: flex; justify-content: space-between; align-items: center; }
+
+  /* === PANEL === */
+  .mock-panel {
+    width: 360px; background: var(--surface);
+    border-left: 1px solid var(--border);
+    padding: 24px; flex-shrink: 0; overflow-y: auto;
+  }
+  .panel-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  .panel-section { margin-bottom: 20px; }
+  .panel-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .panel-value { font-size: 13px; color: var(--text-primary); }
+  .panel-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .panel-row:last-child { border-bottom: none; }
+
+  /* === TOOLBAR === */
+  .mock-toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .mock-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all .15s; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text-primary);
+  }
+  .mock-btn:hover { border-color: var(--secondary); color: var(--secondary); }
+  .mock-btn.primary { background: var(--secondary); color: #fff; border-color: var(--secondary); }
+  .mock-btn.primary:hover { background: var(--primary-light); }
+  .mock-btn.sm { padding: 4px 10px; font-size: 12px; }
+
+  .mock-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+  .mock-tab {
+    padding: 10px 20px; font-size: 13px; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    transition: all .15s;
+  }
+  .mock-tab:hover { color: var(--text-primary); }
+  .mock-tab.active { color: var(--secondary); border-bottom-color: var(--secondary); }
+
+  /* === STATS === */
+  .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+  }
+  .stat-card .label { font-size: 12px; color: var(--text-secondary); }
+  .stat-card .value { font-size: 24px; font-weight: 600; color: var(--text-primary); margin-top: 4px; }
+  .stat-card .change { font-size: 11px; margin-top: 4px; }
+  .stat-card .change.up { color: var(--accent); }
+
+  /* === DROP ZONE === */
+  .drop-zone {
+    border: 2px dashed var(--border); border-radius: 12px;
+    padding: 48px; text-align: center; color: var(--text-secondary);
+    transition: all .2s; cursor: pointer;
+  }
+  .drop-zone:hover { border-color: var(--secondary); background: rgba(74,144,217,.03); }
+  .drop-zone .icon { font-size: 40px; margin-bottom: 12px; }
+  .drop-zone .text { font-size: 14px; }
+  .drop-zone .hint { font-size: 12px; color: var(--text-disabled); margin-top: 8px; }
+
+  /* === VIEWER === */
+  .mock-viewer {
+    background: #1E293B; border-radius: 8px; flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,.3); font-size: 14px;
+    position: relative; min-height: 400px;
+  }
+  .mock-viewer .watermark {
+    position: absolute; font-size: 28px; color: rgba(255,255,255,.06);
+    transform: rotate(-30deg); font-weight: 700;
+  }
+  .mock-viewer .page-lines { text-align: left; padding: 40px; width: 100%; }
+  .mock-viewer .page-line {
+    height: 10px; background: rgba(255,255,255,.06); border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .mock-viewer .page-line.short { width: 60%; }
+  .mock-viewer .page-line.medium { width: 80%; }
+  .mock-viewer .page-line.highlight { background: rgba(245,158,11,.2); }
+
+  /* === TIMELINE === */
+  .timeline { padding-left: 20px; border-left: 2px solid var(--border); }
+  .timeline-item { position: relative; padding: 0 0 20px 16px; }
+  .timeline-dot {
+    position: absolute; left: -25px; top: 2px;
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid var(--accent); background: var(--surface);
+  }
+  .timeline-item .time { font-size: 11px; color: var(--text-disabled); }
+  .timeline-item .event { font-size: 13px; color: var(--text-primary); margin-top: 2px; }
+
+  /* === SEARCH RESULTS === */
+  .search-result {
+    padding: 16px; border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 12px; cursor: pointer;
+    transition: all .15s; background: var(--surface);
+  }
+  .search-result:hover { border-color: var(--secondary); box-shadow: 0 2px 8px rgba(27,58,92,.06); }
+  .search-result .title { font-size: 14px; font-weight: 500; color: var(--secondary); }
+  .search-result .path { font-size: 11px; color: var(--text-disabled); margin-top: 2px; }
+  .search-result .excerpt { font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6; }
+  .search-result .excerpt mark { background: rgba(245,158,11,.25); color: var(--text-primary); padding: 1px 2px; border-radius: 2px; }
+
+  /* === PROGRESS === */
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+  .progress-fill.green { background: var(--accent); }
+  .progress-fill.blue { background: var(--secondary); }
+
+  /* === UPLOAD LIST === */
+  .upload-list { margin-top: 16px; }
+  .upload-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    font-size: 13px; animation: slideIn .3s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+  .upload-item .file-icon { font-size: 20px; flex-shrink: 0; }
+  .upload-item .file-info { flex: 1; }
+  .upload-item .file-name { font-weight: 500; }
+  .upload-item .file-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* === VIEW TOGGLE === */
+  .view-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .view-toggle-btn {
+    padding: 6px 12px; font-size: 14px; cursor: pointer;
+    background: var(--surface); color: var(--text-secondary);
+    border: none; transition: all .15s;
+  }
+  .view-toggle-btn.active { background: var(--secondary); color: #fff; }
+
+  /* === RESPONSIVE NOTE === */
+  .responsive-note {
+    text-align: center; padding: 16px;
+    font-size: 12px; color: var(--text-disabled);
+    background: rgba(255,255,255,.02);
+  }
+
+  .flex { display: flex; }
+  .gap-8 { gap: 8px; }
+  .gap-16 { gap: 16px; }
+  .ml-auto { margin-left: auto; }
+  .spacer { flex: 1; }
+  .text-sm { font-size: 12px; }
+  .text-secondary { color: var(--text-secondary); }
+  .mt-16 { margin-top: 16px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .fw-500 { font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="flex gap-8" style="align-items:center;">
+    <h1>Igar</h1>
+    <span class="subtitle">Design Directions</span>
+  </div>
+  <div class="nav-pills" id="navPills">
+    <button class="nav-pill active" data-dir="1">1. Command Center</button>
+    <button class="nav-pill" data-dir="2">2. Clean Workspace</button>
+    <button class="nav-pill" data-dir="3">3. Split View</button>
+    <button class="nav-pill" data-dir="4">4. Search-First</button>
+    <button class="nav-pill" data-dir="5">5. Card Grid</button>
+    <button class="nav-pill" data-dir="6">6. Hybrid Flow</button>
+  </div>
+</nav>
+
+<div class="showcase">
+
+<!-- ============================================================ -->
+<!-- DIRECTION 1: COMMAND CENTER -->
+<!-- ============================================================ -->
+<div class="direction active" id="dir1">
+  <div class="direction-header">
+    <h2>1. Command Center</h2>
+    <p>Dashboard dense avec tout visible en un écran. Sidebar large avec arborescence complète, statistiques en haut, table de documents détaillée. Optimisé pour Thomas (Admin IT) et Fatima (usage intensif).</p>
+    <div class="direction-tags">
+      <span class="direction-tag">Dense</span>
+      <span class="direction-tag">Dashboard</span>
+      <span class="direction-tag">Monitoring</span>
+      <span class="direction-tag">Power User</span>
+    </div>
+  </div>
+  <div class="mockup-frame">
+    <div class="mock-header">
+      <span class="mock-logo">IGAR</span>
+      <div class="mock-search">🔍 Rechercher dans 47 832 documents...</div>
+      <div class="spacer"></div>
+      <div class="mock-notif">🔔<span class="mock-notif-dot"></span></div>
+      <div class="mock-avatar">FM</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-title">Navigation</div>
+          <div class="sidebar-item active"><span class="sidebar-icon">📊</span> Tableau de bord</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📄</span> Documents <span class="sidebar-count">47 832</span></div>
+          <div class="sidebar-item"><span class="sidebar-icon">📥</span> Imports récents <span class="sidebar-count">12</span></div>
+          <div class="sidebar-item"><span class="sidebar-icon">🔒</span> Scellés <span class="sidebar-count">46 210</span></div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-title">Plan de classement</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Ressources Humaines</div>
+          <div class="sidebar-tree">
+            <div class="sidebar-item"><span class="sidebar-icon">📂</span> Contrats</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📂</span> Bulletins de paie</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📂</span> Formations</div>
+          </div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Comptabilité</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Juridique</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Marchés publics</div>
+        </div>
+      </div>
+      <div class="mock-content">
+        <div class="stat-cards">
+          <div class="stat-card">
+            <div class="label">Documents totaux</div>
+            <div class="value">47 832</div>
+            <div class="change up">↑ 234 cette semaine</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Scellés (intègres)</div>
+            <div class="value">96.6%</div>
+            <div class="change up">✓ Tous conformes</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">À vérifier</div>
+            <div class="value" style="color:var(--warning)">8</div>
+            <div class="change">Classification IA incertaine</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Stockage utilisé</div>
+            <div class="value">284 Go</div>
+            <div class="progress-bar mt-16"><div class="progress-fill blue" style="width:57%"></div></div>
+          </div>
+        </div>
+        <div class="mock-toolbar">
+          <span class="fw-500">Documents récents</span>
+          <div class="spacer"></div>
+          <button class="mock-btn primary">📥 Importer</button>
+          <button class="mock-btn">⬇ Exporter</button>
+          <button class="mock-btn sm">Filtres</button>
+        </div>
+        <table class="mock-table">
+          <thead><tr>
+            <th>Nom</th><th>Type</th><th>Date</th><th>Statut</th><th>Confiance IA</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="doc-name">Facture_Engie_Mars2026.pdf</td><td class="doc-type">Facture fournisseur</td><td>15/03/2026</td><td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td><td><span class="badge badge-sealed"><span class="badge-dot"></span> 98%</span></td></tr>
+            <tr><td class="doc-name">Contrat_CDI_Martin.pdf</td><td class="doc-type">Contrat de travail</td><td>14/03/2026</td><td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td><td><span class="badge badge-sealed"><span class="badge-dot"></span> 95%</span></td></tr>
+            <tr><td class="doc-name">Devis_Renovation_Batiment.pdf</td><td class="doc-type">Devis</td><td>14/03/2026</td><td><span class="badge badge-pending"><span class="badge-dot"></span> À vérifier</span></td><td><span class="badge badge-pending"><span class="badge-dot"></span> 72%</span></td></tr>
+            <tr><td class="doc-name">PV_Conseil_Feb2026.docx</td><td class="doc-type">Procès-verbal</td><td>13/03/2026</td><td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td><td><span class="badge badge-sealed"><span class="badge-dot"></span> 91%</span></td></tr>
+            <tr><td class="doc-name">Note_Service_Horaires.pdf</td><td class="doc-type">Note de service</td><td>12/03/2026</td><td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td><td><span class="badge badge-sealed"><span class="badge-dot"></span> 97%</span></td></tr>
+            <tr><td class="doc-name">Scan_Divers_003.tiff</td><td class="doc-type">—</td><td>12/03/2026</td><td><span class="badge badge-error"><span class="badge-dot"></span> Non classé</span></td><td><span class="badge badge-error"><span class="badge-dot"></span> 34%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DIRECTION 2: CLEAN WORKSPACE -->
+<!-- ============================================================ -->
+<div class="direction" id="dir2">
+  <div class="direction-header">
+    <h2>2. Clean Workspace</h2>
+    <p>Interface épurée avec beaucoup d'espace blanc. Sidebar minimaliste (icônes seules), focus total sur la zone de contenu. La drop zone d'import est l'élément central. Optimisé pour Fatima (zéro friction) et Amina (accès rapide).</p>
+    <div class="direction-tags">
+      <span class="direction-tag">Épuré</span>
+      <span class="direction-tag">Minimaliste</span>
+      <span class="direction-tag">Focus contenu</span>
+      <span class="direction-tag">Drop-first</span>
+    </div>
+  </div>
+  <div class="mockup-frame">
+    <div class="mock-header">
+      <span class="mock-logo">IGAR</span>
+      <div class="spacer"></div>
+      <div class="mock-search">🔍 Rechercher...</div>
+      <div class="spacer"></div>
+      <div class="mock-notif">🔔</div>
+      <div class="mock-avatar">AM</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-sidebar compact" style="display:flex; flex-direction:column; align-items:center; gap:8px; padding-top:24px;">
+        <div title="Documents" style="width:40px;height:40px;border-radius:10px;background:rgba(74,144,217,.08);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;">📄</div>
+        <div title="Import" style="width:40px;height:40px;border-radius:10px;background:rgba(16,185,129,.08);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;">📥</div>
+        <div title="Recherche" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;">🔍</div>
+        <div title="Classement" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;">📁</div>
+        <div style="flex:1"></div>
+        <div title="Paramètres" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;">⚙</div>
+      </div>
+      <div class="mock-content" style="max-width:900px; margin:0 auto;">
+        <h3 style="font-size:22px; font-weight:600; margin-bottom:8px;">Bonjour, Amina 👋</h3>
+        <p style="color:var(--text-secondary); margin-bottom:32px;">47 832 documents archivés · Tout est conforme</p>
+
+        <div class="drop-zone" style="margin-bottom:32px;">
+          <div class="icon">📄</div>
+          <div class="text">Déposez vos documents ici</div>
+          <div class="hint">Jusqu'à 500 fichiers · PDF, Office, Images, Emails</div>
+        </div>
+
+        <div class="mock-toolbar">
+          <span class="fw-500" style="font-size:16px;">Activité récente</span>
+        </div>
+        <table class="mock-table">
+          <thead><tr>
+            <th>Document</th><th>Ajouté le</th><th>Statut</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="doc-name">Compte-rendu_Consultation_Dupont.pdf</td><td>Il y a 12 min</td><td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td></tr>
+            <tr><td class="doc-name">Ordonnance_Traitement_Martin.pdf</td><td>Il y a 35 min</td><td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td></tr>
+            <tr><td class="doc-name">Résultats_Labo_20260315.pdf</td><td>Il y a 1h</td><td><span class="badge badge-processing"><span class="badge-dot"></span> En cours</span></td></tr>
+            <tr><td class="doc-name">Consentement_Chirurgie_Leroy.pdf</td><td>Il y a 2h</td><td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DIRECTION 3: SPLIT VIEW -->
+<!-- ============================================================ -->
+<div class="direction" id="dir3">
+  <div class="direction-header">
+    <h2>3. Split View</h2>
+    <p>Liste de documents à gauche, visualiseur intégré à droite. Façon client email (Outlook/Gmail). Le clic sur un document ouvre instantanément la prévisualisation avec filigrane. Optimisé pour Philippe (consultation + preuve) et Amina (accès rapide).</p>
+    <div class="direction-tags">
+      <span class="direction-tag">Deux panneaux</span>
+      <span class="direction-tag">Visualiseur intégré</span>
+      <span class="direction-tag">Consultation</span>
+      <span class="direction-tag">Filigrane</span>
+    </div>
+  </div>
+  <div class="mockup-frame">
+    <div class="mock-header">
+      <span class="mock-logo">IGAR</span>
+      <div class="mock-search">🔍 Rechercher dans 47 832 documents...</div>
+      <div class="spacer"></div>
+      <button class="mock-btn primary" style="font-size:12px;">📥 Importer</button>
+      <div class="mock-notif">🔔<span class="mock-notif-dot"></span></div>
+      <div class="mock-avatar">PL</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-sidebar" style="width:200px;">
+        <div class="sidebar-section">
+          <div class="sidebar-item active"><span class="sidebar-icon">📄</span> Tous</div>
+          <div class="sidebar-item"><span class="sidebar-icon">⭐</span> Favoris</div>
+          <div class="sidebar-item"><span class="sidebar-icon">🕐</span> Récents</div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-title">Classement</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Contrats</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Contentieux</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Sociétés</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Immobilier</div>
+        </div>
+      </div>
+      <!-- Left: Document list -->
+      <div style="width:320px; border-right:1px solid var(--border); overflow-y:auto;">
+        <div style="padding:12px 16px; border-bottom:1px solid var(--border); background:var(--bg);">
+          <div class="flex gap-8" style="align-items:center;">
+            <span class="text-sm fw-500">Contrats</span>
+            <span class="text-sm text-secondary">· 1 247 documents</span>
+          </div>
+        </div>
+        <div style="padding:12px 16px; border-bottom:1px solid var(--border); border-left:3px solid var(--secondary); background:rgba(74,144,217,.03); cursor:pointer;">
+          <div style="font-size:13px; font-weight:500;">Contrat_CDI_Martin_Jean.pdf</div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">CDI · 14/03/2026 · <span style="color:#059669">Scellé</span></div>
+        </div>
+        <div style="padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer;">
+          <div style="font-size:13px; font-weight:500;">Avenant_Salaire_Dupont.pdf</div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Avenant · 12/03/2026 · <span style="color:#059669">Scellé</span></div>
+        </div>
+        <div style="padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer;">
+          <div style="font-size:13px; font-weight:500;">Contrat_Prestation_InfoTech.pdf</div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Prestation · 10/03/2026 · <span style="color:#059669">Scellé</span></div>
+        </div>
+        <div style="padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer;">
+          <div style="font-size:13px; font-weight:500;">Bail_Commercial_Rue_Paix.pdf</div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Bail · 08/03/2026 · <span style="color:#D97706">À vérifier</span></div>
+        </div>
+        <div style="padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer;">
+          <div style="font-size:13px; font-weight:500;">NDA_Partenaire_XYZ.pdf</div>
+          <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">NDA · 05/03/2026 · <span style="color:#059669">Scellé</span></div>
+        </div>
+      </div>
+      <!-- Right: Viewer + metadata -->
+      <div style="flex:1; display:flex; flex-direction:column;">
+        <div style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--surface);">
+          <span class="fw-500" style="font-size:14px;">Contrat_CDI_Martin_Jean.pdf</span>
+          <span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span>
+          <div class="spacer"></div>
+          <button class="mock-btn sm">📋 Certificat</button>
+          <button class="mock-btn sm">⬇ Télécharger</button>
+        </div>
+        <div style="flex:1; display:flex;">
+          <div class="mock-viewer" style="margin:12px; border-radius:8px;">
+            <span class="watermark">Philippe LAURENT · 16/03/2026 14:32</span>
+            <div class="page-lines">
+              <div class="page-line" style="width:40%; height:14px; margin-bottom:20px;"></div>
+              <div class="page-line medium"></div>
+              <div class="page-line"></div>
+              <div class="page-line short"></div>
+              <div class="page-line"></div>
+              <div class="page-line medium"></div>
+              <div class="page-line highlight"></div>
+              <div class="page-line highlight" style="width:45%;"></div>
+              <div class="page-line"></div>
+              <div class="page-line short"></div>
+            </div>
+          </div>
+          <div style="width:240px; border-left:1px solid var(--border); padding:16px; font-size:12px;">
+            <div class="panel-label">Métadonnées</div>
+            <div class="panel-row"><span class="text-secondary">Type</span><span>Contrat de travail</span></div>
+            <div class="panel-row"><span class="text-secondary">Date</span><span>14/03/2026</span></div>
+            <div class="panel-row"><span class="text-secondary">Employé</span><span>Martin Jean</span></div>
+            <div class="panel-row"><span class="text-secondary">Durée</span><span>CDI</span></div>
+            <div class="panel-row"><span class="text-secondary">Pages</span><span>8</span></div>
+            <div style="margin-top:16px;">
+              <div class="panel-label">Intégrité</div>
+              <div class="panel-row"><span class="text-secondary">SHA-256</span><span style="font-family:monospace;font-size:10px;">a3f2...8b1c</span></div>
+              <div class="panel-row"><span class="text-secondary">Scellé le</span><span>14/03/2026</span></div>
+              <div class="panel-row"><span class="text-secondary">Conservation</span><span>50 ans</span></div>
+            </div>
+            <div style="margin-top:16px;">
+              <div class="panel-label">Cycle de vie</div>
+              <div class="timeline" style="margin-top:8px;">
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="time">14/03 09:12</div><div class="event">Scellé WORM</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="time">14/03 09:12</div><div class="event">Métadonnées validées</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="time">14/03 09:11</div><div class="event">Classifié par IA (95%)</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="time">14/03 09:10</div><div class="event">Importé par F. Benali</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DIRECTION 4: SEARCH-FIRST -->
+<!-- ============================================================ -->
+<div class="direction" id="dir4">
+  <div class="direction-header">
+    <h2>4. Search-First</h2>
+    <p>La barre de recherche domine l'interface. Résultats en plein écran avec surlignage contextuel. Navigation et sidebar sont secondaires. Pensé comme un "Google interne" pour les documents. Optimisé pour la recherche full-text dans 100K+ documents.</p>
+    <div class="direction-tags">
+      <span class="direction-tag">Recherche dominante</span>
+      <span class="direction-tag">Full-text</span>
+      <span class="direction-tag">Surlignage</span>
+      <span class="direction-tag">Google-like</span>
+    </div>
+  </div>
+  <div class="mockup-frame">
+    <div class="mock-header" style="justify-content:center; gap:24px;">
+      <span class="mock-logo">IGAR</span>
+      <div class="mock-search large">🔍 contrat martin renouvellement</div>
+      <div class="mock-notif">🔔</div>
+      <div class="mock-avatar">FM</div>
+    </div>
+    <div class="mock-body">
+      <div style="width:200px; border-right:1px solid var(--border); padding:16px;">
+        <div class="panel-label mb-8">Filtres</div>
+        <div style="margin-bottom:16px;">
+          <div class="text-sm fw-500 mb-8">Type</div>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; cursor:pointer;">
+            <input type="checkbox" checked> Contrats (23)
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; cursor:pointer;">
+            <input type="checkbox"> Avenants (8)
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; cursor:pointer;">
+            <input type="checkbox"> Courriers (4)
+          </label>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div class="text-sm fw-500 mb-8">Période</div>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; cursor:pointer;">
+            <input type="radio" name="period" checked> Tout
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; cursor:pointer;">
+            <input type="radio" name="period"> 30 derniers jours
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; cursor:pointer;">
+            <input type="radio" name="period"> Cette année
+          </label>
+        </div>
+        <div>
+          <div class="text-sm fw-500 mb-8">Statut</div>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; cursor:pointer;">
+            <input type="checkbox" checked> Scellé
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; cursor:pointer;">
+            <input type="checkbox" checked> En attente
+          </label>
+        </div>
+      </div>
+      <div class="mock-content" style="max-width:800px;">
+        <div style="font-size:13px; color:var(--text-secondary); margin-bottom:20px;">
+          <strong>35 résultats</strong> pour "contrat martin renouvellement" · en 0.3s
+        </div>
+
+        <div class="search-result">
+          <div class="title">Contrat_CDI_Martin_Jean.pdf</div>
+          <div class="path">RH / Contrats / CDI / 2026 · <span class="badge badge-sealed" style="font-size:10px;"><span class="badge-dot"></span> Scellé</span></div>
+          <div class="excerpt">...suite au <mark>renouvellement</mark> de la période d'essai, le présent <mark>contrat</mark> liant l'employeur à M. <mark>Martin</mark> Jean est confirmé en CDI à compter du 1er mars 2026...</div>
+        </div>
+
+        <div class="search-result">
+          <div class="title">Avenant_Renouvellement_Martin_2025.pdf</div>
+          <div class="path">RH / Contrats / Avenants / 2025 · <span class="badge badge-sealed" style="font-size:10px;"><span class="badge-dot"></span> Scellé</span></div>
+          <div class="excerpt">Avenant de <mark>renouvellement</mark> au <mark>contrat</mark> CDD de M. <mark>Martin</mark> Jean pour une durée de 6 mois, du 1er septembre 2025 au 28 février 2026...</div>
+        </div>
+
+        <div class="search-result">
+          <div class="title">Courrier_Proposition_Renouvellement.pdf</div>
+          <div class="path">RH / Courriers / 2025 · <span class="badge badge-sealed" style="font-size:10px;"><span class="badge-dot"></span> Scellé</span></div>
+          <div class="excerpt">Madame, Monsieur <mark>Martin</mark>, nous avons le plaisir de vous informer que votre <mark>contrat</mark> sera proposé au <mark>renouvellement</mark> lors du prochain conseil...</div>
+        </div>
+
+        <div class="search-result">
+          <div class="title">PV_CE_Discussion_Renouvellements.docx</div>
+          <div class="path">Juridique / PV / CE / 2025 · <span class="badge badge-sealed" style="font-size:10px;"><span class="badge-dot"></span> Scellé</span></div>
+          <div class="excerpt">...point 3 de l'ordre du jour : <mark>renouvellement</mark> des <mark>contrat</mark>s à durée déterminée. Cas de M. <mark>Martin</mark> évoqué favorablement par la direction...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DIRECTION 5: CARD GRID -->
+<!-- ============================================================ -->
+<div class="direction" id="dir5">
+  <div class="direction-header">
+    <h2>5. Card Grid</h2>
+    <p>Documents affichés en grille de cartes avec vignettes visuelles. Style Google Drive / Notion. Identification rapide par la miniature. Basculement possible vers la vue liste. Optimisé pour la navigation visuelle et les types documentaires variés.</p>
+    <div class="direction-tags">
+      <span class="direction-tag">Visuel</span>
+      <span class="direction-tag">Grille</span>
+      <span class="direction-tag">Vignettes</span>
+      <span class="direction-tag">Google Drive-like</span>
+    </div>
+  </div>
+  <div class="mockup-frame">
+    <div class="mock-header">
+      <span class="mock-logo">IGAR</span>
+      <div class="mock-search">🔍 Rechercher...</div>
+      <div class="spacer"></div>
+      <button class="mock-btn primary" style="font-size:12px;">📥 Importer</button>
+      <div class="mock-notif">🔔</div>
+      <div class="mock-avatar">FM</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-sidebar" style="width:200px;">
+        <div class="sidebar-section">
+          <div class="sidebar-item active"><span class="sidebar-icon">📄</span> Tous les documents</div>
+          <div class="sidebar-item"><span class="sidebar-icon">⭐</span> Favoris</div>
+          <div class="sidebar-item"><span class="sidebar-icon">🕐</span> Récents</div>
+          <div class="sidebar-item"><span class="sidebar-icon">⚠️</span> À vérifier <span class="sidebar-count">8</span></div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-title">Classement</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Ressources Humaines</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Comptabilité</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Juridique</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Marchés publics</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Communication</div>
+        </div>
+      </div>
+      <div class="mock-content">
+        <div class="mock-toolbar">
+          <span class="fw-500" style="font-size:16px;">Ressources Humaines</span>
+          <span class="text-sm text-secondary">· 3 420 documents</span>
+          <div class="spacer"></div>
+          <div class="view-toggle">
+            <button class="view-toggle-btn active" title="Grille">▦</button>
+            <button class="view-toggle-btn" title="Liste">☰</button>
+          </div>
+          <button class="mock-btn sm">Trier ↓</button>
+          <button class="mock-btn sm">Filtres</button>
+        </div>
+        <div class="card-grid">
+          <div class="doc-card">
+            <div class="doc-card-thumb pdf">PDF</div>
+            <div class="doc-card-info">
+              <div class="name">Facture_Engie_Mars.pdf</div>
+              <div class="meta"><span>15/03/2026</span><span class="badge badge-sealed" style="font-size:10px;padding:1px 6px;"><span class="badge-dot"></span> Scellé</span></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-card-thumb doc">DOC</div>
+            <div class="doc-card-info">
+              <div class="name">Contrat_CDI_Martin.pdf</div>
+              <div class="meta"><span>14/03/2026</span><span class="badge badge-sealed" style="font-size:10px;padding:1px 6px;"><span class="badge-dot"></span> Scellé</span></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-card-thumb pdf">PDF</div>
+            <div class="doc-card-info">
+              <div class="name">Devis_Renovation.pdf</div>
+              <div class="meta"><span>14/03/2026</span><span class="badge badge-pending" style="font-size:10px;padding:1px 6px;"><span class="badge-dot"></span> À vérifier</span></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-card-thumb img">IMG</div>
+            <div class="doc-card-info">
+              <div class="name">Photo_Badge_Dupont.jpg</div>
+              <div class="meta"><span>13/03/2026</span><span class="badge badge-sealed" style="font-size:10px;padding:1px 6px;"><span class="badge-dot"></span> Scellé</span></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-card-thumb xls">XLS</div>
+            <div class="doc-card-info">
+              <div class="name">Planning_Congés_2026.xlsx</div>
+              <div class="meta"><span>12/03/2026</span><span class="badge badge-sealed" style="font-size:10px;padding:1px 6px;"><span class="badge-dot"></span> Scellé</span></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-card-thumb pdf">PDF</div>
+            <div class="doc-card-info">
+              <div class="name">PV_Conseil_Fev.pdf</div>
+              <div class="meta"><span>10/03/2026</span><span class="badge badge-sealed" style="font-size:10px;padding:1px 6px;"><span class="badge-dot"></span> Scellé</span></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-card-thumb doc">DOC</div>
+            <div class="doc-card-info">
+              <div class="name">Note_Service_Horaires.docx</div>
+              <div class="meta"><span>08/03/2026</span><span class="badge badge-sealed" style="font-size:10px;padding:1px 6px;"><span class="badge-dot"></span> Scellé</span></div>
+            </div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-card-thumb pdf">PDF</div>
+            <div class="doc-card-info">
+              <div class="name">Attestation_Formation.pdf</div>
+              <div class="meta"><span>05/03/2026</span><span class="badge badge-sealed" style="font-size:10px;padding:1px 6px;"><span class="badge-dot"></span> Scellé</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DIRECTION 6: HYBRID FLOW -->
+<!-- ============================================================ -->
+<div class="direction" id="dir6">
+  <div class="direction-header">
+    <h2>6. Hybrid Flow</h2>
+    <p>Mix intelligent : table principale + panel contextuel droit qui s'ouvre au clic. Toggle entre vues table/cartes. Tabs pour basculer entre documents, import en cours, et conformité. Le meilleur des deux mondes. Approche recommandée.</p>
+    <div class="direction-tags">
+      <span class="direction-tag">Polyvalent</span>
+      <span class="direction-tag">Panel contextuel</span>
+      <span class="direction-tag">Multi-vues</span>
+      <span class="direction-tag">Recommandé</span>
+    </div>
+  </div>
+  <div class="mockup-frame">
+    <div class="mock-header">
+      <span class="mock-logo">IGAR</span>
+      <div class="mock-search">🔍 Rechercher dans 47 832 documents...</div>
+      <div class="spacer"></div>
+      <button class="mock-btn primary" style="font-size:12px;">📥 Importer</button>
+      <div class="mock-notif">🔔<span class="mock-notif-dot"></span></div>
+      <div class="mock-avatar">FM</div>
+    </div>
+    <div class="mock-body">
+      <div class="mock-sidebar" style="width:220px;">
+        <div class="sidebar-section">
+          <div class="sidebar-item active"><span class="sidebar-icon">📄</span> Documents <span class="sidebar-count">47 832</span></div>
+          <div class="sidebar-item"><span class="sidebar-icon">📥</span> Import en cours <span class="sidebar-count" style="background:rgba(16,185,129,.1);color:#059669;">3</span></div>
+          <div class="sidebar-item"><span class="sidebar-icon">⚠️</span> À vérifier <span class="sidebar-count" style="background:rgba(245,158,11,.1);color:#D97706;">8</span></div>
+          <div class="sidebar-item"><span class="sidebar-icon">🔒</span> Conformité</div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-title">Plan de classement</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Ressources Humaines</div>
+          <div class="sidebar-tree">
+            <div class="sidebar-item active"><span class="sidebar-icon">📂</span> Contrats</div>
+            <div class="sidebar-item"><span class="sidebar-icon">📂</span> Bulletins de paie</div>
+          </div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Comptabilité</div>
+          <div class="sidebar-item"><span class="sidebar-icon">📁</span> Juridique</div>
+        </div>
+      </div>
+      <div class="mock-content" style="padding:0;">
+        <div class="mock-tabs" style="padding:0 24px;">
+          <div class="mock-tab active">Documents</div>
+          <div class="mock-tab">Import en cours (3)</div>
+          <div class="mock-tab">Conformité</div>
+        </div>
+        <div style="padding:16px 24px;">
+          <div class="mock-toolbar">
+            <span class="text-sm text-secondary">RH / Contrats · 1 247 documents</span>
+            <div class="spacer"></div>
+            <div class="view-toggle">
+              <button class="view-toggle-btn active">☰</button>
+              <button class="view-toggle-btn">▦</button>
+            </div>
+            <button class="mock-btn sm">Filtres</button>
+            <button class="mock-btn sm">⬇ Export</button>
+          </div>
+          <div style="display:flex; gap:0;">
+            <div style="flex:1;">
+              <table class="mock-table">
+                <thead><tr>
+                  <th style="width:24px;"><input type="checkbox"></th>
+                  <th>Nom</th><th>Type</th><th>Date</th><th>Statut</th>
+                </tr></thead>
+                <tbody>
+                  <tr style="background:rgba(74,144,217,.04);">
+                    <td><input type="checkbox" checked></td>
+                    <td class="doc-name" style="color:var(--secondary);">Contrat_CDI_Martin_Jean.pdf</td>
+                    <td class="doc-type">CDI</td><td>14/03/2026</td>
+                    <td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="doc-name">Avenant_Salaire_Dupont.pdf</td>
+                    <td class="doc-type">Avenant</td><td>12/03/2026</td>
+                    <td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="doc-name">Contrat_Prestation_InfoTech.pdf</td>
+                    <td class="doc-type">Prestation</td><td>10/03/2026</td>
+                    <td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="doc-name">Bail_Commercial_Rue_Paix.pdf</td>
+                    <td class="doc-type">Bail</td><td>08/03/2026</td>
+                    <td><span class="badge badge-pending"><span class="badge-dot"></span> À vérifier</span></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="doc-name">NDA_Partenaire_XYZ.pdf</td>
+                    <td class="doc-type">NDA</td><td>05/03/2026</td>
+                    <td><span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="mock-panel" style="width:320px; padding:20px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                <span class="fw-500" style="font-size:14px;">Contrat_CDI_Martin_Jean.pdf</span>
+              </div>
+              <div style="display:flex; gap:6px; margin-bottom:16px;">
+                <span class="badge badge-sealed"><span class="badge-dot"></span> Scellé</span>
+                <span class="text-sm text-secondary">· 8 pages · 1.2 Mo</span>
+              </div>
+              <div style="background:var(--bg); border-radius:8px; height:180px; display:flex; align-items:center; justify-content:center; color:var(--text-disabled); margin-bottom:16px; position:relative; overflow:hidden;">
+                <span style="position:absolute; font-size:14px; color:rgba(0,0,0,.04); transform:rotate(-30deg); font-weight:700;">F. Benali · 16/03/2026</span>
+                Aperçu PDF
+              </div>
+              <div style="display:flex; gap:6px; margin-bottom:20px;">
+                <button class="mock-btn sm primary" style="flex:1;">Ouvrir</button>
+                <button class="mock-btn sm" style="flex:1;">📋 Certificat</button>
+              </div>
+              <div class="panel-section">
+                <div class="panel-label">Métadonnées</div>
+                <div class="panel-row"><span class="text-sm text-secondary">Type</span><span class="text-sm">Contrat de travail</span></div>
+                <div class="panel-row"><span class="text-sm text-secondary">Employé</span><span class="text-sm">Martin Jean</span></div>
+                <div class="panel-row"><span class="text-sm text-secondary">Durée</span><span class="text-sm">CDI</span></div>
+                <div class="panel-row"><span class="text-sm text-secondary">Date création</span><span class="text-sm">14/03/2026</span></div>
+              </div>
+              <div class="panel-section">
+                <div class="panel-label">Intégrité</div>
+                <div class="panel-row"><span class="text-sm text-secondary">SHA-256</span><span class="text-sm" style="font-family:monospace;font-size:10px;">a3f2c8...1b9e</span></div>
+                <div class="panel-row"><span class="text-sm text-secondary">Scellé le</span><span class="text-sm">14/03/2026 09:12</span></div>
+                <div class="panel-row"><span class="text-sm text-secondary">Conservation</span><span class="text-sm">Jusqu'au 14/03/2076</span></div>
+              </div>
+              <div class="panel-section">
+                <div class="panel-label">Historique</div>
+                <div class="timeline" style="margin-top:4px; font-size:11px;">
+                  <div class="timeline-item" style="padding-bottom:12px;"><div class="timeline-dot" style="width:8px;height:8px;left:-23px;"></div><div class="time">14/03 09:12</div><div class="event">Scellé WORM</div></div>
+                  <div class="timeline-item" style="padding-bottom:12px;"><div class="timeline-dot" style="width:8px;height:8px;left:-23px;"></div><div class="time">14/03 09:11</div><div class="event">Classifié IA (95%)</div></div>
+                  <div class="timeline-item" style="padding-bottom:0;"><div class="timeline-dot" style="width:8px;height:8px;left:-23px;"></div><div class="time">14/03 09:10</div><div class="event">Importé</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /showcase -->
+
+<!-- COMPARISON NOTE -->
+<div class="responsive-note" style="padding:32px 48px; text-align:left;">
+  <h3 style="color:#fff; margin-bottom:16px; font-size:18px;">Comparaison rapide</h3>
+  <table style="width:100%; font-size:12px; color:var(--text-disabled); border-collapse:collapse;">
+    <thead>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.1);">
+        <th style="text-align:left; padding:8px; color:rgba(255,255,255,.5);">Direction</th>
+        <th style="text-align:left; padding:8px; color:rgba(255,255,255,.5);">Persona idéale</th>
+        <th style="text-align:left; padding:8px; color:rgba(255,255,255,.5);">Force principale</th>
+        <th style="text-align:left; padding:8px; color:rgba(255,255,255,.5);">Limite</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.05);"><td style="padding:8px;">1. Command Center</td><td style="padding:8px;">Thomas (Admin IT)</td><td style="padding:8px;">Vue d'ensemble, monitoring</td><td style="padding:8px;">Peut submerger les non-techniques</td></tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.05);"><td style="padding:8px;">2. Clean Workspace</td><td style="padding:8px;">Amina (Médecin)</td><td style="padding:8px;">Simplicité, zéro friction</td><td style="padding:8px;">Pas assez dense pour usage intensif</td></tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.05);"><td style="padding:8px;">3. Split View</td><td style="padding:8px;">Philippe (Avocat)</td><td style="padding:8px;">Consultation + preuves</td><td style="padding:8px;">Espace limité sur petits écrans</td></tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.05);"><td style="padding:8px;">4. Search-First</td><td style="padding:8px;">Fatima (intensif)</td><td style="padding:8px;">Retrouver n'importe quoi</td><td style="padding:8px;">Moins adapté à la navigation par dossier</td></tr>
+      <tr style="border-bottom:1px solid rgba(255,255,255,.05);"><td style="padding:8px;">5. Card Grid</td><td style="padding:8px;">Tous (visuel)</td><td style="padding:8px;">Identification visuelle rapide</td><td style="padding:8px;">Moins efficace pour les gros volumes</td></tr>
+      <tr><td style="padding:8px; color:rgba(255,255,255,.8);">6. Hybrid Flow ⭐</td><td style="padding:8px; color:rgba(255,255,255,.8);">Tous</td><td style="padding:8px; color:rgba(255,255,255,.8);">Polyvalent, adaptable</td><td style="padding:8px; color:rgba(255,255,255,.8);">Complexité de développement</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const pills = document.querySelectorAll('.nav-pill');
+  const directions = document.querySelectorAll('.direction');
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      directions.forEach(d => d.classList.remove('active'));
+      pill.classList.add('active');
+      document.getElementById('dir' + pill.dataset.dir).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

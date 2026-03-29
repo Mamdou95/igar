@@ -1,0 +1,105 @@
+# generated: 2026-03-17
+# project: Igar
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-17
+project: Igar
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 1: Acces Securise & Gestion des Permissions
+  epic-1: in-progress
+  1-1-mise-en-place-du-socle-backend-pour-les-services-documentaires: done
+  1-2-deploiement-operationnel-de-la-plateforme-igar: review
+  1-3-interface-utilisateur-de-base-et-theme-igar: review
+  1-4-authentification-jwt-et-interface-de-connexion: done
+  1-5-authentification-a-deux-facteurs-2fa: ready-for-dev
+  1-6-gestion-des-utilisateurs-roles-et-cloisonnement: backlog
+  epic-1-retrospective: optional
+
+  # Epic 2: Capture Intelligente & Classification IA
+  epic-2: backlog
+  2-1-upload-de-documents-par-drag-and-drop-et-selecteur-de-fichiers: backlog
+  2-2-upload-resumable-et-progression-temps-reel: backlog
+  2-3-pipeline-ocr-extraction-de-texte: backlog
+  2-4-classification-ia-et-extraction-de-metadonnees: backlog
+  2-5-validation-et-correction-des-metadonnees-par-lutilisateur: backlog
+  2-6-validation-en-masse-et-lancement-du-scellement: backlog
+  2-7-ingestion-automatique-par-email-imap: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Coffre-Fort Numerique & Archivage a Valeur Probante
+  epic-3: backlog
+  3-1-abstraction-de-stockage-minio-et-chiffrement-sse-c: backlog
+  3-2-scellement-worm-et-object-lock: backlog
+  3-3-empreinte-sha-256-et-certificat-de-scellement: backlog
+  3-4-verification-dintegrite-a-la-demande: backlog
+  3-5-verification-dintegrite-periodique-automatisee: backlog
+  3-6-protection-contre-la-suppression-et-message-explicatif: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Recherche Instantanee & Consultation Securisee
+  epic-4: backlog
+  4-1-indexation-full-text-dans-elasticsearch: backlog
+  4-2-recherche-full-text-et-filtres-combines: backlog
+  4-3-navigation-par-plan-de-classement: backlog
+  4-4-visualiseur-pdf-et-images-integre: backlog
+  4-5-visualiseur-office-audio-video-et-archives: backlog
+  4-6-filigrane-dynamique-cote-serveur: backlog
+  4-7-surlignage-des-termes-de-recherche-dans-le-visualiseur: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Cycle de Vie, Conformite & Administration
+  epic-5: backlog
+  5-1-audit-trail-immuable-et-signe-cryptographiquement: backlog
+  5-2-configuration-du-plan-de-classement: backlog
+  5-3-notifications-decheance-de-conservation: backlog
+  5-4-processus-de-destruction-reglementaire-avec-double-validation: backlog
+  5-5-suppression-logique-rgpd: backlog
+  5-6-configuration-des-canaux-de-capture-et-parametres-de-securite: backlog
+  5-7-tableau-de-bord-de-conformite: backlog
+  5-8-consultation-et-export-de-laudit-trail: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: API REST & Integration Externe
+  epic-6: backlog
+  6-1-documentation-openapi-3-0-et-versioning-api: backlog
+  6-2-api-de-depot-de-document-avec-metadonnees: backlog
+  6-3-api-de-recherche-de-documents: backlog
+  6-4-api-de-recuperation-de-document-et-metadonnees: backlog
+  6-5-api-de-verification-dintegrite: backlog
+  6-6-api-de-certificat-de-scellement: backlog
+  epic-6-retrospective: optional
