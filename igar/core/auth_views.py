@@ -280,10 +280,17 @@ class TwoFactorSetupAPIView(APIView):
         if _get_confirmed_device(user):
             raise OTPAlreadySetupError("Le 2FA est deja configure pour cet utilisateur.")
 
-        device, _ = TOTPDevice.objects.get_or_create(user=user, name="igar-default", defaults={"confirmed": False})
-        device.key = random_hex(20)
-        device.confirmed = False
-        device.save(update_fields=["key", "confirmed"])
+        device, created = TOTPDevice.objects.get_or_create(
+            user=user,
+            name="igar-default",
+            defaults={"confirmed": False, "key": random_hex(20)},
+        )
+
+        # Keep the same pending secret until confirmation to avoid invalidating
+        # freshly scanned authenticator entries on page reload or duplicate calls.
+        if not created and not device.key:
+            device.key = random_hex(20)
+            device.save(update_fields=["key"])
 
         secret = _totp_secret(device)
         provisioning_uri = pyotp.TOTP(secret).provisioning_uri(

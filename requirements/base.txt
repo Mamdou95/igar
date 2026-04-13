@@ -49,7 +49,7 @@ pypdf==5.1.0
 python-dateutil==2.9.0.post0
 python_gnupg==0.5.4
 pytz==2024.2
-qrcode==8.0
+qrcode==7.4.2
 requests==2.32.4
 sentry-sdk==2.35.0
 sh==2.1.0
