@@ -46,15 +46,15 @@ development_status:
   1-2-deploiement-operationnel-de-la-plateforme-igar: review
   1-3-interface-utilisateur-de-base-et-theme-igar: review
   1-4-authentification-jwt-et-interface-de-connexion: done
-  1-5-authentification-a-deux-facteurs-2fa: ready-for-dev
-  1-6-gestion-des-utilisateurs-roles-et-cloisonnement: backlog
+  1-5-authentification-a-deux-facteurs-2fa: review
+  1-6-gestion-des-utilisateurs-roles-et-cloisonnement: review
   epic-1-retrospective: optional
 
   # Epic 2: Capture Intelligente & Classification IA
-  epic-2: backlog
-  2-1-upload-de-documents-par-drag-and-drop-et-selecteur-de-fichiers: backlog
-  2-2-upload-resumable-et-progression-temps-reel: backlog
-  2-3-pipeline-ocr-extraction-de-texte: backlog
+  epic-2: in-progress
+  2-1-upload-de-documents-par-drag-and-drop-et-selecteur-de-fichiers: review
+  2-2-upload-resumable-et-progression-temps-reel: review
+  2-3-pipeline-ocr-extraction-de-texte: done
   2-4-classification-ia-et-extraction-de-metadonnees: backlog
   2-5-validation-et-correction-des-metadonnees-par-lutilisateur: backlog
   2-6-validation-en-masse-et-lancement-du-scellement: backlog

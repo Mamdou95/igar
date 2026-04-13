@@ -151,6 +151,9 @@ services:
       context: ../backend
       dockerfile: docker/Dockerfile
     command: celery -A mayan worker -Q ocr -c 2 --loglevel=info
+    cpus: "1.00"
+    mem_limit: 1g
+    pids_limit: 256
     env_file:
       - .env
     environment:
