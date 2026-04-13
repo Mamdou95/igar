@@ -3,6 +3,11 @@
     "searchPlaceholder": "Rechercher un document, un dossier ou un utilisateur",
     "logout": "Se deconnecter"
   },
+  "common": {
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "delete": "Supprimer"
+  },
   "routes": {
     "documents": "Documents",
     "import": "Import",
@@ -17,7 +22,18 @@
       "submit": "Se connecter",
       "usernameRequired": "Veuillez saisir votre identifiant.",
       "passwordRequired": "Veuillez saisir votre mot de passe.",
-      "errorGeneric": "Connexion impossible. Verifiez vos informations puis reessayez."
+      "errorGeneric": "Connexion impossible. Verifiez vos informations puis reessayez.",
+      "twoFactorSetupTitle": "Configurer l'authentification a deux facteurs",
+      "twoFactorSetupDescription": "Scannez le QR code avec votre application TOTP puis saisissez le code a 6 chiffres.",
+      "twoFactorVerifyTitle": "Verification 2FA",
+      "twoFactorVerifyDescription": "Saisissez le code de verification de votre application d'authentification.",
+      "twoFactorCode": "Code a 6 chiffres",
+      "twoFactorCodeRequired": "Veuillez saisir le code OTP.",
+      "twoFactorCodeInvalid": "Le code OTP doit contenir 6 chiffres.",
+      "twoFactorCodePlaceholder": "123456",
+      "twoFactorQrAlt": "QR code de configuration 2FA",
+      "twoFactorConfirm": "Confirmer le 2FA",
+      "twoFactorVerify": "Verifier et acceder"
     },
     "documents": {
       "title": "Espace documents",
@@ -25,7 +41,15 @@
     },
     "import": {
       "title": "Import",
-      "description": "Canal de depots et d'ingestion des documents."
+      "description": "Canal de depots et d'ingestion des documents.",
+      "empty": "Aucun fichier en cours d'import.",
+      "globalProgress": "{{uploaded}}/{{total}} fichier(s) telecharge(s)",
+      "reconnecting": "Reconnexion en cours...",
+      "disconnected": "Connexion interrompue",
+      "disconnectedDescription": "Les uploads reprendront automatiquement a la reconnexion.",
+      "resumedMessage": "Upload repris - aucun fichier perdu",
+      "inProgress": "Import en cours: {{count}} fichier(s)",
+      "uploadFailed": "Echec de l'upload"
     },
     "conformite": {
       "title": "Conformite",
@@ -33,7 +57,106 @@
     },
     "admin": {
       "title": "Administration",
-      "description": "Parametrage des profils, securite et gouvernance de la plateforme."
+      "description": "Parametrage des profils, securite et gouvernance de la plateforme.",
+      "columns": {
+        "username": "Utilisateur",
+        "twoFactorStatus": "Statut 2FA",
+        "lastReset": "Derniere reinitialisation",
+        "resetHistory": "Historique",
+        "actions": "Actions"
+      },
+      "twoFactorEnabled": "2FA active",
+      "twoFactorDisabled": "2FA non active",
+      "twoFactorResetTitle": "Reinitialiser le 2FA",
+      "twoFactorResetConfirm": "L'utilisateur devra reconfigurer son 2FA a la prochaine connexion.",
+      "twoFactorResetAction": "Reinitialiser 2FA",
+      "twoFactorResetCancel": "Annuler",
+      "twoFactorResetSuccess": "Le 2FA utilisateur a ete reinitialise."
+    },
+    "admin_users": {
+      "title": "Utilisateurs",
+      "description": "Gestion des comptes, roles et statuts.",
+      "createUser": "Creer un utilisateur",
+      "editUser": "Modifier l'utilisateur",
+      "refresh": "Rafraichir",
+      "export": "Exporter",
+      "searchPlaceholder": "Rechercher par nom ou email",
+      "filterByStatus": "Filtrer par statut",
+      "filterByGroup": "Filtrer par groupe",
+      "username": "Identifiant",
+      "email": "Email",
+      "password": "Mot de passe",
+      "firstName": "Prenom",
+      "lastName": "Nom",
+      "groups": "Groupes",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "readOnly": "Lecture seule",
+      "edit": "Modifier",
+      "deactivate": "Desactiver",
+      "reset": "Confirmer",
+      "resetPassword": "Reset mot de passe",
+      "reset2FA": "Reset 2FA",
+      "usernameRequired": "Identifiant requis",
+      "usernameAlphanumeric": "Utiliser uniquement lettres, chiffres, . _ -",
+      "emailRequired": "Email requis",
+      "emailInvalid": "Email invalide",
+      "passwordRequired": "Mot de passe requis",
+      "groupsRequired": "Selectionnez au moins un groupe",
+      "deactivateTitle": "Desactiver l'utilisateur",
+      "deactivateConfirm": "Confirmez la desactivation de ce compte.",
+      "resetPasswordTitle": "Reinitialiser le mot de passe",
+      "resetPasswordConfirm": "Un lien de reinitialisation sera genere.",
+      "loadUsersFailed": "Impossible de charger les utilisateurs",
+      "loadUserFailed": "Impossible de charger cet utilisateur",
+      "loadRolesFailed": "Impossible de charger les roles",
+      "saveUserFailed": "Echec de sauvegarde utilisateur",
+      "deactivateUserFailed": "Echec de desactivation",
+      "passwordResetFailed": "Echec de reinitialisation du mot de passe",
+      "twoFactorResetFailed": "Echec de reinitialisation 2FA",
+      "userCreatedSuccess": "Utilisateur cree avec succes",
+      "userUpdatedSuccess": "Utilisateur modifie avec succes",
+      "userDeactivatedSuccess": "Utilisateur desactive",
+      "passwordResetSuccess": "Demande de reset envoyee",
+      "twoFactorResetSuccess": "2FA reinitialise",
+      "columns": {
+        "username": "Identifiant",
+        "email": "Email",
+        "name": "Nom complet",
+        "roles": "Groupes",
+        "status": "Statut",
+        "actions": "Actions"
+      }
+    },
+    "admin_roles": {
+      "title": "Roles",
+      "description": "Gestion des roles et permissions.",
+      "createRole": "Creer un role",
+      "editRole": "Modifier le role",
+      "name": "Nom du role",
+      "nameRequired": "Nom du role requis",
+      "permissions": "Permissions",
+      "permissionsRequired": "Selectionnez au moins une permission",
+      "edit": "Modifier",
+      "deleteRole": "Supprimer",
+      "deleteRoleConfirm": "Confirmez la suppression de ce role",
+      "loadRolesFailed": "Impossible de charger les roles",
+      "loadPermissionsFailed": "Impossible de charger les permissions",
+      "loadAccessGroupsFailed": "Impossible de charger les groupes documentaires",
+      "saveRoleFailed": "Echec de sauvegarde du role",
+      "deleteRoleFailed": "Echec de suppression du role",
+      "roleCreatedSuccess": "Role cree avec succes",
+      "roleUpdatedSuccess": "Role modifie avec succes",
+      "roleDeletedSuccess": "Role supprime avec succes",
+      "accessGroups": "Groupes documentaires",
+      "accessGroupsTitle": "Restreindre les groupes documentaires",
+      "accessGroupsPlaceholder": "Selectionnez les groupes autorises",
+      "accessGroupsUpdatedSuccess": "Groupes documentaires du role mis a jour",
+      "columns": {
+        "name": "Nom",
+        "permissionCount": "Nb permissions",
+        "actions": "Actions"
+      }
     }
   }
 }

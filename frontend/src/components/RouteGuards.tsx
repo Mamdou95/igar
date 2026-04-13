@@ -13,10 +13,16 @@ export function RequireAuth() {
 }
 
 export function PublicOnly() {
+  const location = useLocation()
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const twoFactorRequired = useAuthStore((state) => state.twoFactor.required)
 
   if (isAuthenticated) {
     return <Navigate to="/documents" replace />
+  }
+
+  if (twoFactorRequired && !location.pathname.startsWith('/login/2fa')) {
+    return <Navigate to="/login/2fa" replace />
   }
 
   return <Outlet />

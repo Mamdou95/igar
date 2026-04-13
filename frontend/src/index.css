@@ -6,6 +6,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --ocean-surface: #ffffff;
+  --ocean-border: #d1dee8;
+  --ocean-text: #0f2a43;
+  --ocean-gradient: radial-gradient(circle at 10% 0%, #eef5fb 0%, #e6f0fa 40%, #eaf1f7 100%);
 }
 
 * {
@@ -18,10 +22,16 @@ body,
   margin: 0;
   width: 100%;
   min-height: 100vh;
-  background: #f8fafc;
+  background: var(--ocean-gradient);
+  color: var(--ocean-text);
 }
 
 .igar-content {
   min-height: calc(100vh - 56px);
   padding: 24px;
+}
+
+.admin-surface {
+  border: 1px solid var(--ocean-border);
+  box-shadow: 0 8px 24px rgba(15, 42, 67, 0.08);
 }

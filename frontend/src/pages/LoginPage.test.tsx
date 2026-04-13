@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { LoginPage } from './LoginPage'
 import { useAuthStore } from '../stores/authStore'
-import { apiClient } from '../api/client'
+import * as authApi from '../api/auth'
 import '../i18n'
 
 // Mock window.matchMedia for Ant Design responsive components
@@ -28,12 +28,13 @@ describe('LoginPage', () => {
   })
 
   it('redirects to documents after successful login', async () => {
-    vi.spyOn(apiClient, 'get').mockResolvedValue({ data: { detail: 'CSRF cookie set' } })
-    vi.spyOn(apiClient, 'post').mockResolvedValue({
-      data: {
-        access: 'token-123',
-        user: { id: 7, username: 'alice' },
-      },
+    vi.spyOn(authApi, 'requestCsrfCookie').mockResolvedValue()
+    vi.spyOn(authApi, 'login').mockResolvedValue({
+      access: 'token-123',
+      user: { id: 7, username: 'alice' },
+      two_fa_required: false,
+      two_fa_verified: true,
+      next_action: null,
     })
 
     render(
@@ -59,10 +60,46 @@ describe('LoginPage', () => {
     expect(useAuthStore.getState().isAuthenticated).toBe(true)
   })
 
+  it('redirects to 2fa flow when backend requires otp', async () => {
+    vi.spyOn(authApi, 'requestCsrfCookie').mockResolvedValue()
+    vi.spyOn(authApi, 'login').mockResolvedValue({
+      access: null,
+      user: { id: 7, username: 'alice' },
+      two_fa_required: true,
+      two_fa_verified: false,
+      next_action: 'setup',
+      challenge_token: 'challenge-token',
+    })
+
+    render(
+      <MemoryRouter initialEntries={['/login']}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login/2fa" element={<div>twofa-route</div>} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.change(screen.getByLabelText('Identifiant'), {
+      target: { value: 'alice' },
+    })
+    fireEvent.change(screen.getByLabelText('Mot de passe'), {
+      target: { value: 'StrongPassword123!' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Se connecter' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('twofa-route')).toBeInTheDocument()
+    })
+    expect(useAuthStore.getState().isAuthenticated).toBe(false)
+    expect(useAuthStore.getState().twoFactor.required).toBe(true)
+  })
+
   it('shows backend error message when login fails', async () => {
-    vi.spyOn(apiClient, 'get').mockResolvedValue({ data: { detail: 'CSRF cookie set' } })
-    vi.spyOn(apiClient, 'post').mockRejectedValue({
+    vi.spyOn(authApi, 'requestCsrfCookie').mockResolvedValue()
+    vi.spyOn(authApi, 'login').mockRejectedValue({
       response: {
+        access: 'token-123',
         data: {
           detail: 'Identifiants invalides.',
         },

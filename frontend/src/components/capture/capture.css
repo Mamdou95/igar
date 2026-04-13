@@ -1,0 +1,38 @@
+.capture-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 40, 71, 0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  animation: captureFadeIn 200ms ease-in;
+}
+
+.capture-overlay-active {
+  background: rgba(16, 62, 110, 0.9);
+}
+
+.capture-overlay-card {
+  width: min(680px, calc(100% - 32px));
+  border: 2px dashed #10b981;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.capture-overlay-icon {
+  font-size: 42px;
+  color: #1b3a5c;
+  margin-bottom: 12px;
+}
+
+@keyframes captureFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

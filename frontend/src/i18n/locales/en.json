@@ -3,6 +3,11 @@
     "searchPlaceholder": "Search documents, folders, or users",
     "logout": "Sign out"
   },
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete"
+  },
   "routes": {
     "documents": "Documents",
     "import": "Import",
@@ -17,7 +22,18 @@
       "submit": "Sign in",
       "usernameRequired": "Please enter your username.",
       "passwordRequired": "Please enter your password.",
-      "errorGeneric": "Unable to sign in. Please check your credentials and try again."
+      "errorGeneric": "Unable to sign in. Please check your credentials and try again.",
+      "twoFactorSetupTitle": "Set up two-factor authentication",
+      "twoFactorSetupDescription": "Scan the QR code with your TOTP app and enter the 6-digit code.",
+      "twoFactorVerifyTitle": "2FA verification",
+      "twoFactorVerifyDescription": "Enter the verification code from your authenticator app.",
+      "twoFactorCode": "6-digit code",
+      "twoFactorCodeRequired": "Please enter the OTP code.",
+      "twoFactorCodeInvalid": "OTP code must contain 6 digits.",
+      "twoFactorCodePlaceholder": "123456",
+      "twoFactorQrAlt": "2FA setup QR code",
+      "twoFactorConfirm": "Confirm 2FA",
+      "twoFactorVerify": "Verify and continue"
     },
     "documents": {
       "title": "Documents hub",
@@ -25,7 +41,15 @@
     },
     "import": {
       "title": "Import",
-      "description": "Document intake and ingestion channel."
+      "description": "Document intake and ingestion channel.",
+      "empty": "No files currently uploading.",
+      "globalProgress": "{{uploaded}}/{{total}} file(s) uploaded",
+      "reconnecting": "Reconnecting...",
+      "disconnected": "Connection interrupted",
+      "disconnectedDescription": "Uploads will resume automatically when reconnected.",
+      "resumedMessage": "Upload resumed - no files lost",
+      "inProgress": "Uploads in progress: {{count}} file(s)",
+      "uploadFailed": "Upload failed"
     },
     "conformite": {
       "title": "Compliance",
@@ -33,7 +57,106 @@
     },
     "admin": {
       "title": "Administration",
-      "description": "Security, role and governance settings for the platform."
+      "description": "Security, role and governance settings for the platform.",
+      "columns": {
+        "username": "User",
+        "twoFactorStatus": "2FA status",
+        "lastReset": "Last reset",
+        "resetHistory": "History",
+        "actions": "Actions"
+      },
+      "twoFactorEnabled": "2FA enabled",
+      "twoFactorDisabled": "2FA disabled",
+      "twoFactorResetTitle": "Reset 2FA",
+      "twoFactorResetConfirm": "The user will need to configure 2FA again at next sign-in.",
+      "twoFactorResetAction": "Reset 2FA",
+      "twoFactorResetCancel": "Cancel",
+      "twoFactorResetSuccess": "User 2FA has been reset."
+    },
+    "admin_users": {
+      "title": "Users",
+      "description": "Manage user accounts, roles, and statuses.",
+      "createUser": "Create user",
+      "editUser": "Edit user",
+      "refresh": "Refresh",
+      "export": "Export",
+      "searchPlaceholder": "Search by name or email",
+      "filterByStatus": "Filter by status",
+      "filterByGroup": "Filter by group",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "groups": "Groups",
+      "active": "Active",
+      "inactive": "Inactive",
+      "readOnly": "Read-only",
+      "edit": "Edit",
+      "deactivate": "Deactivate",
+      "reset": "Confirm",
+      "resetPassword": "Reset password",
+      "reset2FA": "Reset 2FA",
+      "usernameRequired": "Username is required",
+      "usernameAlphanumeric": "Use only letters, numbers, . _ -",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "passwordRequired": "Password is required",
+      "groupsRequired": "Select at least one group",
+      "deactivateTitle": "Deactivate user",
+      "deactivateConfirm": "Please confirm account deactivation.",
+      "resetPasswordTitle": "Reset password",
+      "resetPasswordConfirm": "A reset link will be generated.",
+      "loadUsersFailed": "Unable to load users",
+      "loadUserFailed": "Unable to load this user",
+      "loadRolesFailed": "Unable to load roles",
+      "saveUserFailed": "Failed to save user",
+      "deactivateUserFailed": "Failed to deactivate user",
+      "passwordResetFailed": "Failed to reset password",
+      "twoFactorResetFailed": "Failed to reset 2FA",
+      "userCreatedSuccess": "User created successfully",
+      "userUpdatedSuccess": "User updated successfully",
+      "userDeactivatedSuccess": "User deactivated",
+      "passwordResetSuccess": "Reset request sent",
+      "twoFactorResetSuccess": "2FA reset",
+      "columns": {
+        "username": "Username",
+        "email": "Email",
+        "name": "Full name",
+        "roles": "Groups",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "admin_roles": {
+      "title": "Roles",
+      "description": "Manage roles and permissions.",
+      "createRole": "Create role",
+      "editRole": "Edit role",
+      "name": "Role name",
+      "nameRequired": "Role name is required",
+      "permissions": "Permissions",
+      "permissionsRequired": "Select at least one permission",
+      "edit": "Edit",
+      "deleteRole": "Delete",
+      "deleteRoleConfirm": "Please confirm role deletion",
+      "loadRolesFailed": "Unable to load roles",
+      "loadPermissionsFailed": "Unable to load permissions",
+      "loadAccessGroupsFailed": "Unable to load document access groups",
+      "saveRoleFailed": "Failed to save role",
+      "deleteRoleFailed": "Failed to delete role",
+      "roleCreatedSuccess": "Role created successfully",
+      "roleUpdatedSuccess": "Role updated successfully",
+      "roleDeletedSuccess": "Role deleted successfully",
+      "accessGroups": "Document groups",
+      "accessGroupsTitle": "Restrict document access groups",
+      "accessGroupsPlaceholder": "Select authorized groups",
+      "accessGroupsUpdatedSuccess": "Role document groups updated",
+      "columns": {
+        "name": "Name",
+        "permissionCount": "Permissions",
+        "actions": "Actions"
+      }
     }
   }
 }

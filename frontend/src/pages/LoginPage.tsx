@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Alert, Button, Card, Flex, Form, Input, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { apiClient } from '../api/client'
+import { login, requestCsrfCookie } from '../api/auth'
 import { useAuthStore } from '../stores/authStore'
 
 type LoginFormValues = {
@@ -15,6 +15,7 @@ export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const setSession = useAuthStore((state) => state.setSession)
+  const startTwoFactor = useAuthStore((state) => state.startTwoFactor)
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -23,13 +24,21 @@ export function LoginPage() {
     setErrorMessage(null)
 
     try {
-      await apiClient.get('/auth/csrf/')
-      const response = await apiClient.post('/auth/login/', values)
+      await requestCsrfCookie()
+      const payload = await login(values.username, values.password)
 
-      const accessToken = response.data?.access as string
-      const user = response.data?.user as { id: number; username: string }
+      if (payload.two_fa_required && payload.challenge_token && payload.next_action) {
+        startTwoFactor({ challengeToken: payload.challenge_token, nextAction: payload.next_action })
+        navigate('/login/2fa', { replace: true })
+        return
+      }
 
-      setSession(accessToken, user)
+      if (!payload.access) {
+        setErrorMessage(t('pages.login.errorGeneric'))
+        return
+      }
+
+      setSession(payload.access, payload.user)
 
       const redirectPath = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname
       navigate(redirectPath ?? '/documents', { replace: true })
