@@ -86,3 +86,6 @@ CACHES = {
         "LOCATION": os.environ.get("REDIS_URL", "redis://redis:6379/1"),
     }
 }
+
+IGAR_AUTH_2FA_BYPASS = False
+OTP_TOTP_ISSUER = os.environ.get("OTP_TOTP_ISSUER", "Igar")

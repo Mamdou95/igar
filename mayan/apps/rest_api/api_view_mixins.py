@@ -231,7 +231,7 @@ class QuerySetOverrideCheckAPIViewMixin:
     def get_source_queryset(self):
         if self.source_queryset is None:
             if self.model:
-                return self.model._default_manager.all()
+                queryset = self.model._default_manager.all()
             else:
                 raise ImproperlyConfigured(
                     '%(cls)s is missing a QuerySet. Define '
@@ -240,8 +240,17 @@ class QuerySetOverrideCheckAPIViewMixin:
                         'cls': self.__class__.__name__
                     }
                 )
+        else:
+            queryset = self.source_queryset
 
-        return self.source_queryset
+        try:
+            from igar.core.document_access import filter_queryset_for_user
+        except Exception:
+            return queryset
+
+        return filter_queryset_for_user(
+            queryset=queryset, user=self.request.user
+        )
 
     def get_queryset(self):
         if getattr(self, 'swagger_fake_view', False):

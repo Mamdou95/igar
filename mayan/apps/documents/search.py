@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy as _
+from django.contrib.admin.utils import NotRelationField
 
 from mayan.apps.dynamic_search.search_models import SearchModel
 from mayan.apps.views.literals import LIST_MODE_CHOICE_ITEM
@@ -7,6 +8,14 @@ from .permissions import (
     permission_document_file_view, permission_document_type_view,
     permission_document_version_view, permission_document_view
 )
+
+
+def _add_optional_model_field(search_model, field, label):
+    # Some settings variants can initialize models without resolving this relation.
+    try:
+        search_model.add_model_field(field=field, label=label)
+    except NotRelationField:
+        pass
 
 # Document
 
@@ -48,6 +57,11 @@ search_model_document.add_model_field(
 search_model_document.add_model_field(
     field='files__mimetype', label=('Document file MIME type')
 )
+_add_optional_model_field(
+    search_model=search_model_document,
+    field='access_groups__id',
+    label=_(message='Document access group ID')
+)
 
 # Document file
 
@@ -80,6 +94,11 @@ search_model_document_file.add_model_field(
 search_model_document_file.add_model_field(
     field='document__uuid', label=_(message='Document UUID')
 )
+_add_optional_model_field(
+    search_model=search_model_document_file,
+    field='document__access_groups__id',
+    label=_(message='Document access group ID')
+)
 search_model_document_file.add_model_field(field='checksum')
 search_model_document_file.add_model_field(field='comment')
 search_model_document_file.add_model_field(field='filename')
@@ -111,6 +130,11 @@ search_model_document_file_page.add_model_field(
 )
 search_model_document_file_page.add_model_field(
     field='document_file__document__uuid', label=_(message='Document UUID')
+)
+_add_optional_model_field(
+    search_model=search_model_document_file_page,
+    field='document_file__document__access_groups__id',
+    label=_(message='Document access group ID')
 )
 
 # Document type
@@ -155,6 +179,11 @@ search_model_document_version.add_model_field(
 search_model_document_version.add_model_field(
     field='document__uuid', label=_(message='Document UUID')
 )
+_add_optional_model_field(
+    search_model=search_model_document_version,
+    field='document__access_groups__id',
+    label=_(message='Document access group ID')
+)
 
 # Document version page
 
@@ -180,4 +209,9 @@ search_model_document_version_page.add_model_field(
 search_model_document_version_page.add_model_field(
     field='document_version__document__uuid',
     label=_(message='Document UUID')
+)
+_add_optional_model_field(
+    search_model=search_model_document_version_page,
+    field='document_version__document__access_groups__id',
+    label=_(message='Document access group ID')
 )

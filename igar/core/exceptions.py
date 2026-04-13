@@ -46,3 +46,52 @@ class AuthenticationFailedError(IgarException):
 
     status_code = 401
     error_type = "invalid_credentials"
+
+
+class OTPInvalidError(IgarException):
+    """Raised when a provided OTP code is invalid."""
+
+    status_code = 401
+    error_type = "otp_invalid"
+
+
+class OTPAlreadySetupError(IgarException):
+    """Raised when OTP setup is requested for an already configured account."""
+
+    status_code = 400
+    error_type = "otp_already_setup"
+
+
+class OTPSetupRequiredError(IgarException):
+    """Raised when OTP verification is requested before setup."""
+
+    status_code = 400
+    error_type = "otp_setup_required"
+
+
+class OTPChallengeInvalidError(IgarException):
+    """Raised when a login challenge token is invalid or expired."""
+
+    status_code = 401
+    error_type = "otp_challenge_invalid"
+
+
+class OTPRateLimitedError(IgarException):
+    """Raised when OTP verification attempts exceed configured limits."""
+
+    status_code = 429
+    error_type = "otp_rate_limited"
+
+
+class CaptureUnsupportedFileTypeError(IgarException):
+    """Raised when capture receives a file type outside supported MIME list."""
+
+    status_code = 422
+    error_type = "capture_unsupported_file_type"
+
+
+class CaptureFileTooLargeError(IgarException):
+    """Raised when capture receives a file beyond configured upload limit."""
+
+    status_code = 422
+    error_type = "capture_file_too_large"

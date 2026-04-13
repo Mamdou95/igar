@@ -27,6 +27,15 @@ from .models import UserConfirmView, UserViewMode
 from .utils import is_url_query_positive
 
 
+def _filter_queryset_for_document_access(queryset, user):
+    try:
+        from igar.core.document_access import filter_queryset_for_user
+    except Exception:
+        return queryset
+
+    return filter_queryset_for_user(queryset=queryset, user=user)
+
+
 class ContentTypeViewMixin:
     """
     This mixin makes it easier for views to retrieve a content type from
@@ -149,6 +158,10 @@ class ExternalObjectBaseMixin:
                 permission=permission, queryset=queryset,
                 user=self.request.user
             )
+
+        queryset = _filter_queryset_for_document_access(
+            queryset=queryset, user=self.request.user
+        )
 
         return queryset
 
@@ -593,6 +606,10 @@ class RestrictedQuerysetViewMixin:
                 permission=object_permission, queryset=queryset,
                 user=self.request.user
             )
+
+        queryset = _filter_queryset_for_document_access(
+            queryset=queryset, user=self.request.user
+        )
 
         return queryset
 

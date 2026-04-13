@@ -5,6 +5,18 @@ mayan/media
 db.sqlite*
 docker
 !docker/rootfs
+!docker/entrypoint.sh
+!docker/Dockerfile
 ./.*
 docs
+
+# Igar infrastructure build exclusions
+__pycache__
+*.pyc
+.env
+node_modules
+.pytest_cache
+.coverage
+htmlcov/
+*.egg-info
 

@@ -14,11 +14,12 @@ urlpatterns = [
                 # App URLs will be added as apps are implemented
                 # path("vault/", include("igar.apps.vault.urls")),
                 # path("intelligence/", include("igar.apps.intelligence.urls")),
-                # path("capture/", include("igar.apps.capture.urls")),
+                path("capture/", include("igar.apps.capture.urls")),
                 # path("compliance/", include("igar.apps.compliance.urls")),
                 # path("viewer/", include("igar.apps.viewer.urls")),
                 # path("licensing/", include("igar.apps.licensing.urls")),
                 path("auth/", include("igar.core.auth_urls")),
+                path("admin/", include("igar.core.admin_urls")),
             ]
         ),
     ),

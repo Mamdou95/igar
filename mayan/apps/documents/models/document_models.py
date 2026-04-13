@@ -54,6 +54,13 @@ class Document(
         on_delete=models.CASCADE, related_name='documents', to=DocumentType,
         verbose_name=_(message='Document type')
     )
+    access_groups = models.ManyToManyField(
+        blank=True,
+        help_text=_(message='Document access groups used for cloisonnement.'),
+        related_name='documents',
+        to='igar_core.DocumentAccessGroup',
+        verbose_name=_(message='Access groups')
+    )
     label = models.CharField(
         blank=True, db_index=True, default='', max_length=255,
         help_text=_(

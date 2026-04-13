@@ -48,3 +48,7 @@ LOGGING = {
         "level": "CRITICAL",
     },
 }
+
+IGAR_AUTH_2FA_BYPASS = False
+OTP_TOTP_ISSUER = "Igar"
+SEARCH_BACKEND = "mayan.apps.dynamic_search.tests.backends.TestSearchBackendProxy"

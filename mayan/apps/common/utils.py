@@ -1,4 +1,7 @@
-from distutils import util
+try:
+    from distutils import util
+except ModuleNotFoundError:  # Python 3.12+
+    from setuptools._distutils import util
 from functools import reduce
 import itertools
 import logging

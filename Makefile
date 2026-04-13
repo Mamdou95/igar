@@ -44,7 +44,11 @@ COMMAND_SENTRY = \
 	fi
 
 COMMAND_TEST = ./manage.py test $(MODULE) --settings=$(SETTINGS) $(SKIPMIGRATIONS) $(DEBUG) $(ARGUMENTS) $(ARGUMENT_TAG)
+COMMAND_TEST_LOCAL = ./contrib/scripts/manage_with_cairo.py test $(MODULE) --settings=$(SETTINGS) $(SKIPMIGRATIONS) $(DEBUG) $(ARGUMENTS) $(ARGUMENT_TAG)
 COMMAND_TEST_MIGRATIONS = ./manage.py test $(MODULE) --no-exclude --settings=$(SETTINGS) --tag=migration_test $(DEBUG) $(ARGUMENTS)
+COMMAND_TEST_DYLD = \
+	export DYLD_FALLBACK_LIBRARY_PATH="/opt/homebrew/lib:/opt/homebrew/opt/cairo/lib:/usr/local/lib:$$DYLD_FALLBACK_LIBRARY_PATH"; \
+	export DYLD_LIBRARY_PATH="/opt/homebrew/lib:/opt/homebrew/opt/cairo/lib:/usr/local/lib:$$DYLD_LIBRARY_PATH";
 
 CONTAINER_NAME_TEST_ELASTIC = mayan-test-elastic
 CONTAINER_NAME_TEST_MYSQL = mayan-test-mysql
@@ -64,20 +68,32 @@ clean: ## Remove Python and build artifacts.
 clean: clean-build clean-pyc
 
 clean-build: ## Remove build artifacts.
-	rm --force --recursive build/
-	rm --force --recursive dist/
-	rm --force --recursive *.egg-info
+	rm -f -r build/
+	rm -f -r dist/
+	rm -f -r *.egg-info
 
 clean-pyc: ## Remove Python artifacts.
-	find . -name '*.pyc' -exec rm --force {} +
-	find . -name '*.pyo' -exec rm --force {} +
-	find . -name '*~' -exec rm --force {} +
-	find . -name '__pycache__' -exec rm --force --recursive {} +
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	find . -name '*~' -exec rm -f {} +
+	find . -name '__pycache__' -exec rm -f -r {} +
 
 # Testing
 
+PYTEST ?= pytest
+PYTEST_ARGS ?=
+
+pytest-local: ## PYTEST_ARGS="<args>" - Run pytest with Cairo fallback paths on macOS.
+	@$(COMMAND_TEST_DYLD) \
+	$(PYTEST) $(PYTEST_ARGS)
+
 _test-command:
+	$(COMMAND_TEST_DYLD) \
 	$(COMMAND_TEST)
+
+_test-command-local:
+	$(COMMAND_TEST_DYLD) \
+	$(COMMAND_TEST_LOCAL)
 
 test: ## MODULE=<python module name> - Run tests for a single app, module or test class.
 test: clean-pyc _test-command
@@ -88,6 +104,15 @@ test-debug: clean-pyc _test-command
 
 test-all: ## Run all tests.
 test-all: clean-pyc _test-command
+
+test-all-local: ## Run all tests using a local Cairo-preloaded Django runner (macOS helper).
+test-all-local: clean-pyc _test-command-local
+
+IGAR_PYTEST_ARGS ?= tests -q
+
+test-all-igar-local: ## Run pytest suite with Igar settings and local Cairo paths.
+test-all-igar-local: clean-pyc
+	$(MAKE) pytest-local PYTEST_ARGS="$(IGAR_PYTEST_ARGS)"
 
 test-all-debug: ## Run all tests in debug mode.
 test-all-debug: DEBUG=--debug-mode

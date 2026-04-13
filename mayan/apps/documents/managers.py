@@ -224,12 +224,26 @@ class ValidDocumentManager(models.Manager):
             in_trash=False
         )
 
+    def for_user(self, user):
+        from igar.core.document_access import filter_queryset_for_user
+
+        return filter_queryset_for_user(
+            queryset=self.get_queryset(), user=user
+        )
+
 
 class ValidDocumentFileManager(models.Manager):
     def get_queryset(self):
         return models.QuerySet(
             model=self.model, using=self._db
         ).filter(document__in_trash=False)
+
+    def for_user(self, user):
+        from igar.core.document_access import filter_queryset_for_user
+
+        return filter_queryset_for_user(
+            queryset=self.get_queryset(), user=user
+        )
 
 
 class ValidDocumentFilePageManager(models.Manager):
@@ -240,12 +254,26 @@ class ValidDocumentFilePageManager(models.Manager):
             document_file__document__in_trash=False
         )
 
+    def for_user(self, user):
+        from igar.core.document_access import filter_queryset_for_user
+
+        return filter_queryset_for_user(
+            queryset=self.get_queryset(), user=user
+        )
+
 
 class ValidDocumentVersionManager(models.Manager):
     def get_queryset(self):
         return models.QuerySet(
             model=self.model, using=self._db
         ).filter(document__in_trash=False)
+
+    def for_user(self, user):
+        from igar.core.document_access import filter_queryset_for_user
+
+        return filter_queryset_for_user(
+            queryset=self.get_queryset(), user=user
+        )
 
 
 class ValidDocumentVersionPageManager(models.Manager):
@@ -254,6 +282,13 @@ class ValidDocumentVersionPageManager(models.Manager):
             model=self.model, using=self._db
         ).filter(
             document_version__document__in_trash=False
+        )
+
+    def for_user(self, user):
+        from igar.core.document_access import filter_queryset_for_user
+
+        return filter_queryset_for_user(
+            queryset=self.get_queryset(), user=user
         )
 
 

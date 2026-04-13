@@ -1,7 +1,10 @@
 import functools
+import hashlib
+import json
 import logging
 
 from django.apps import apps
+from django.core.cache import cache
 from django.db.models.signals import m2m_changed, post_save, pre_delete
 from django.utils.module_loading import import_string
 
@@ -18,6 +21,8 @@ from .settings import (
 )
 
 logger = logging.getLogger(name=__name__)
+
+SEARCH_RESULT_CACHE_TTL_SECONDS = 300
 
 
 class SearchBackend:
@@ -343,9 +348,27 @@ class SearchBackend:
             query=query, search_model=search_model
         )
 
-        id_list = search_interpreter.do_resolve(search_backend=self)
+        cache_key = self._build_user_search_cache_key(
+            query=query, search_model=search_model, user=user
+        )
+        cached_id_list = None
+
+        if cache_key and not store_resultset:
+            cached_id_list = cache.get(cache_key)
+
+        if cached_id_list is not None:
+            id_list = cached_id_list
+        else:
+            id_list = search_interpreter.do_resolve(search_backend=self)
 
         queryset = queryset or search_model.get_queryset()
+
+        try:
+            from igar.core.document_access import filter_queryset_for_user
+        except Exception:
+            pass
+        else:
+            queryset = filter_queryset_for_user(queryset=queryset, user=user)
 
         queryset = queryset.filter(pk__in=id_list)
 
@@ -356,6 +379,13 @@ class SearchBackend:
             )
 
         queryset = SearchBackend.limit_queryset(queryset=queryset)
+
+        if cache_key and not store_resultset and cached_id_list is None:
+            cache.set(
+                cache_key,
+                list(queryset.values_list('pk', flat=True)),
+                SEARCH_RESULT_CACHE_TTL_SECONDS
+            )
 
         if store_resultset:
             search_explainer_text = search_interpreter.to_explain()
@@ -369,6 +399,18 @@ class SearchBackend:
             saved_resultset = None
 
         return (saved_resultset, queryset)
+
+    @staticmethod
+    def _build_user_search_cache_key(query, search_model, user):
+        if not user or not getattr(user, 'is_authenticated', False):
+            return None
+
+        payload = json.dumps(query, sort_keys=True, default=str)
+        search_model_name = getattr(search_model, 'full_name', search_model.__class__.__name__)
+        raw_key = '{}:{}:{}'.format(search_model_name, user.pk, payload)
+        digest = hashlib.sha256(raw_key.encode('utf-8')).hexdigest()
+
+        return 'igar:dynamic-search:user-resultset:{}'.format(digest)
 
     def tear_down(self):
         """

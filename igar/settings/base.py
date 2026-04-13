@@ -11,16 +11,22 @@ from mayan.settings.base import *  # noqa: F401, F403
 # Igar apps — added after Mayan's INSTALLED_APPS
 # ---------------------------------------------------------------------------
 IGAR_APPS = [
-    # Igar apps (commented until models are ready)
+    "igar.core.apps.IgarCoreConfig",
     # "igar.apps.vault",
     # "igar.apps.intelligence",
-    # "igar.apps.capture",
+    "igar.apps.capture",
     # "igar.apps.compliance",
     # "igar.apps.viewer",
     # "igar.apps.licensing",
 ]
 
-INSTALLED_APPS = list(INSTALLED_APPS) + IGAR_APPS  # noqa: F405
+IGAR_AUTH_APPS = [
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
+]
+
+INSTALLED_APPS = list(INSTALLED_APPS) + IGAR_AUTH_APPS + IGAR_APPS  # noqa: F405
 
 # ---------------------------------------------------------------------------
 # Core Django overrides
@@ -28,6 +34,25 @@ INSTALLED_APPS = list(INSTALLED_APPS) + IGAR_APPS  # noqa: F405
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ROOT_URLCONF = "igar.urls"
 WSGI_APPLICATION = "igar.wsgi.application"
+ASGI_APPLICATION = "igar.asgi.application"
+MIDDLEWARE = list(MIDDLEWARE) + ["django_otp.middleware.OTPMiddleware"]  # noqa: F405
+
+IGAR_CHANNEL_LAYER_URL = os.environ.get("IGAR_CHANNEL_LAYER_URL")
+if IGAR_CHANNEL_LAYER_URL:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [IGAR_CHANNEL_LAYER_URL],
+            },
+        }
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        }
+    }
 
 # ---------------------------------------------------------------------------
 # REST Framework
@@ -57,6 +82,13 @@ IGAR_AUTH_REFRESH_COOKIE = os.environ.get("IGAR_AUTH_REFRESH_COOKIE", "igar_refr
 IGAR_AUTH_COOKIE_PATH = os.environ.get("IGAR_AUTH_COOKIE_PATH", "/api/v1/auth/")
 IGAR_AUTH_COOKIE_SAMESITE = os.environ.get("IGAR_AUTH_COOKIE_SAMESITE", "Lax")
 IGAR_AUTH_COOKIE_SECURE = os.environ.get("IGAR_AUTH_COOKIE_SECURE", "false").lower() == "true"
+IGAR_AUTH_2FA_ENABLED = os.environ.get("IGAR_AUTH_2FA_ENABLED", "true").lower() == "true"
+IGAR_AUTH_2FA_BYPASS = os.environ.get("IGAR_AUTH_2FA_BYPASS", "false").lower() == "true"
+IGAR_AUTH_2FA_CHALLENGE_TTL_SECONDS = int(os.environ.get("IGAR_AUTH_2FA_CHALLENGE_TTL_SECONDS", "600"))
+IGAR_AUTH_2FA_CHALLENGE_SALT = os.environ.get("IGAR_AUTH_2FA_CHALLENGE_SALT", "igar.auth.2fa.challenge")
+IGAR_AUTH_2FA_MAX_ATTEMPTS = int(os.environ.get("IGAR_AUTH_2FA_MAX_ATTEMPTS", "5"))
+OTP_TOTP_ISSUER = os.environ.get("OTP_TOTP_ISSUER", "Igar")
+OTP_TOTP_INITIAL_TOLERANCE = int(os.environ.get("OTP_TOTP_INITIAL_TOLERANCE", "1"))
 
 # ---------------------------------------------------------------------------
 # Logging — structlog JSON
@@ -122,6 +154,7 @@ STRONGHOLD_PUBLIC_URLS = tuple(STRONGHOLD_PUBLIC_URLS) + (  # noqa: F405
     r"^/api/v1/auth/csrf/?$",
     r"^/api/v1/auth/login/?$",
     r"^/api/v1/auth/refresh/?$",
+    r"^/api/v1/auth/2fa/.+$",
 )
 
 # ---------------------------------------------------------------------------

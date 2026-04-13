@@ -7,6 +7,12 @@ from django.test import Client
 User = get_user_model()
 
 
+@pytest.fixture(autouse=True)
+def _enable_2fa_bypass_for_legacy_auth_tests(settings):
+    settings.IGAR_AUTH_2FA_BYPASS = True
+    settings.IGAR_AUTH_2FA_ENABLED = False
+
+
 @pytest.mark.django_db
 def test_login_returns_access_token_and_refresh_cookie(client):
     User.objects.create_user(username='alice', password='StrongPassword123!')
