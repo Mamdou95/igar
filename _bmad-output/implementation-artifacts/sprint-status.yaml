@@ -55,7 +55,7 @@ development_status:
   2-1-upload-de-documents-par-drag-and-drop-et-selecteur-de-fichiers: review
   2-2-upload-resumable-et-progression-temps-reel: review
   2-3-pipeline-ocr-extraction-de-texte: done
-  2-4-classification-ia-et-extraction-de-metadonnees: backlog
+  2-4-classification-ia-et-extraction-de-metadonnees: ready-for-dev
   2-5-validation-et-correction-des-metadonnees-par-lutilisateur: backlog
   2-6-validation-en-masse-et-lancement-du-scellement: backlog
   2-7-ingestion-automatique-par-email-imap: backlog
